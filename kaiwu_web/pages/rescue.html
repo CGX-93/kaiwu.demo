@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>开物 · 失败修复库</title>
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/rescue.css" />
+</head>
+<body class="rescue-page">
+
+  <div class="page-bg" aria-hidden="true">
+    <img src="../assets/hero-hand.png" alt="" />
+  </div>
+
+  <header class="rs-header">
+    <a class="rs-brand" href="../index.html">
+      <span class="fn-mark">开</span>
+      <span class="fn-name">开物</span>
+      <span class="fn-back">← 回首页</span>
+    </a>
+    <div class="rs-actions">
+      <a class="btn-glow ghost sm" href="question.html?dir=ecom">+ 造一份工单</a>
+      <a class="btn-glow ghost sm" href="history.html">📂 历史</a>
+    </div>
+  </header>
+
+  <main class="rs-main">
+
+    <!-- Hero -->
+    <section class="rs-hero">
+      <div class="rs-eyebrow">
+        <span class="dot-pulse"></span>
+        EMERGENCY · 急救手册
+      </div>
+      <h1 class="rs-title">做到一半卡住了？<em>对症下药。</em></h1>
+      <p class="rs-lead">
+        不用从头看教程 · 不用搜半小时帖子 · 把你遇到的问题点一下，<br/>
+        我们直接给你一套验证过的修复方案——提示词、参数、操作步骤一气呵成。
+      </p>
+      <div class="rs-stats">
+        <div class="rs-stat"><span class="n" id="statSymptoms">8</span><span class="l">常见症状</span></div>
+        <div class="rs-stat"><span class="n" id="statScenarios">24</span><span class="l">具体场景</span></div>
+        <div class="rs-stat"><span class="n" id="statSolved">—</span><span class="l">解决率</span></div>
+      </div>
+    </section>
+
+    <!-- 8 症状网格 -->
+    <section class="symptom-grid" id="symptomGrid"></section>
+
+  </main>
+
+  <footer class="imm-footer-mini">
+    开物会记录你的使用数据用于改进方法论模型 · 数据匿名化处理 · 可在
+    <a href="history.html">历史页</a>一键导出或删除 ·
+    <a href="data-policy.html">数据透明性说明</a>
+  </footer>
+
+  <script src="../js/data-layer.js"></script>
+  <script src="../js/common.js"></script>
+  <script src="../js/rescue-data.js"></script>
+  <script src="../js/rescue.js"></script>
+  <script src="../js/widget.js"></script>
+</body>
+</html>

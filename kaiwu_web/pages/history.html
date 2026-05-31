@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>开物 · 历史工单</title>
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/history.css" />
+</head>
+<body class="history-page">
+
+  <div class="page-bg" aria-hidden="true">
+    <img src="../assets/hero-hand.png" alt="" />
+  </div>
+
+  <header class="hist-header">
+    <a class="hist-brand" href="../index.html">
+      <span class="fn-mark">开</span>
+      <span class="fn-name">开物</span>
+      <span class="fn-back">← 回首页</span>
+    </a>
+    <div class="hist-actions">
+      <a class="btn-glow ghost sm" href="rescue.html">🚑 修复库</a>
+      <a class="btn-glow primary sm" href="question.html?dir=ecom">+ 造一份新工单</a>
+    </div>
+  </header>
+
+  <main class="hist-main">
+
+    <!-- Hero -->
+    <section class="hist-hero">
+      <div class="hist-eyebrow">
+        <span class="dot-pulse"></span>
+        HISTORY · 我的造物档案
+      </div>
+      <h1 class="hist-title">你做过的<em>所有工单。</em></h1>
+      <p class="hist-lead">
+        每一条都可以重新打开 / 复用思路 / 一键导出全部数据带走。<br/>
+        你做完的越多，开物对你这个类目的方法论就越准。
+      </p>
+      <div class="hist-stat-row" id="histStats"></div>
+    </section>
+
+    <!-- 工具栏 -->
+    <div class="hist-toolbar">
+      <input class="hist-search" id="histSearch" placeholder="搜工单标题 / 产品名 / 关键词..." />
+      <select class="hist-select" id="histFilterDir">
+        <option value="">全部方向</option>
+        <option value="ec">🛒 电商带货</option>
+        <option value="comic">📖 条漫制作</option>
+        <option value="drama">🎬 短剧制作</option>
+        <option value="other">🧩 其他场景</option>
+      </select>
+      <select class="hist-select" id="histSort">
+        <option value="latest">最新</option>
+        <option value="favorite">收藏置顶</option>
+        <option value="madeIt">已做出来优先</option>
+      </select>
+      <button class="btn-glow ghost" id="btnExport">📥 导出全部数据</button>
+    </div>
+
+    <!-- 列表 -->
+    <section class="hist-list" id="histList"></section>
+
+    <!-- 空状态 -->
+    <div class="hist-empty" id="histEmpty" style="display:none">
+      <div class="emoji">📂</div>
+      <h2>还没有工单</h2>
+      <p>答几道题，开物会为你生成第一份导演级工单。<br/>每做一份都会自动存到这里。</p>
+      <div class="ctas">
+        <a class="btn-glow primary" href="question.html?dir=ecom">开始造物 →</a>
+        <a class="btn-glow ghost" href="../index.html">回首页看看</a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="imm-footer-mini">
+    开物会记录你的使用数据用于改进方法论模型 · 数据匿名化处理 · 可在本页一键导出或删除 ·
+    <a href="data-policy.html">数据透明性说明</a>
+  </footer>
+
+  <!-- 删除确认 Modal -->
+  <div class="del-modal" id="delModal">
+    <div class="del-box">
+      <h3>确定删除这份工单？</h3>
+      <p>说一句原因（可选）会帮我们分析哪些模板需要优化。</p>
+      <div class="del-target" id="delTarget"></div>
+      <div class="del-reasons">
+        <label data-v="not-satisfied"><input type="radio" name="delReason" value="not-satisfied"/> 😕 不满意</label>
+        <label data-v="completed"><input type="radio" name="delReason" value="completed"/> ✅ 已完成</label>
+        <label data-v="misclick"><input type="radio" name="delReason" value="misclick"/> 🤦 误操作</label>
+        <label data-v="other"><input type="radio" name="delReason" value="other"/> 💬 其他</label>
+      </div>
+      <div class="del-actions">
+        <button class="btn-glow ghost sm" id="delCancel">取消</button>
+        <button class="btn-glow danger sm" id="delConfirm">确认删除</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/data-layer.js"></script>
+  <script src="../js/common.js"></script>
+  <script src="../js/history.js"></script>
+  <script src="../js/widget.js"></script>
+</body>
+</html>

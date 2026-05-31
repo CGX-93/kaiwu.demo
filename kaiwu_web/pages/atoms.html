@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>开物 · 方法论原子库</title>
+  <link rel="stylesheet" href="../css/common.css" />
+  <style>
+    body.atoms-page {
+      background: #050505;
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .page-bg {
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none; overflow: hidden;
+    }
+    .page-bg img {
+      width: 130%; height: 130%;
+      position: absolute; top: -15%; left: -15%;
+      object-fit: cover; object-position: center 30%;
+      filter: blur(120px) brightness(0.45);
+      opacity: 0.26;
+    }
+    .page-bg::after {
+      content:''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 70% at 50% 30%, transparent 0%, rgba(5,5,5,0.7) 70%, rgba(5,5,5,0.95) 100%);
+    }
+    .at-header {
+      position: relative; z-index: 2;
+      padding: 18px 36px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      background: rgba(5,5,5,0.7);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .at-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .at-brand .fn-mark {
+      width: 34px; height: 34px;
+      display: grid; place-items: center;
+      background: linear-gradient(135deg, #FFB800, #E8500A);
+      color: #fff; border-radius: 10px;
+      font-weight: 800; font-size: 15px;
+      box-shadow: 0 8px 20px rgba(232,80,10,0.45);
+    }
+    .at-brand .fn-name { font-size: 16px; font-weight: 700; letter-spacing: 1.4px; color: #fff; }
+    .at-brand .fn-back { font-size: 12px; color: rgba(255,255,255,0.4); margin-left: 4px; }
+    .at-main {
+      position: relative; z-index: 2;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 80px 36px;
+    }
+    .at-card {
+      padding: 56px 48px;
+      border-radius: 28px;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid rgba(255,255,255,0.12);
+      text-align: center;
+      box-shadow: 0 24px 60px -20px rgba(0,0,0,0.6);
+      position: relative;
+      overflow: hidden;
+    }
+    .at-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(80% 100% at 50% 0%, color-mix(in srgb, var(--ac, #FFB800) 16%, transparent), transparent 60%);
+      z-index: 0;
+    }
+    .at-card > * { position: relative; z-index: 1; }
+    .at-icon {
+      width: 100px; height: 100px;
+      border-radius: 26px;
+      background: linear-gradient(135deg, var(--ac, #FFB800), var(--ac2, #E8500A));
+      margin: 0 auto 26px;
+      display: grid; place-items: center;
+      font-size: 50px;
+      box-shadow: 0 18px 40px color-mix(in srgb, var(--ac, #FFB800) 50%, transparent);
+    }
+    .at-pill {
+      display: inline-block;
+      padding: 5px 14px;
+      border-radius: 999px;
+      background: rgba(232, 80, 10, 0.16);
+      color: #FFD56A;
+      font-size: 11.5px;
+      letter-spacing: 2.5px;
+      border: 1px solid rgba(232, 80, 10, 0.32);
+      margin-bottom: 18px;
+      text-transform: uppercase;
+    }
+    .at-title {
+      font-size: 36px;
+      font-weight: 800;
+      margin: 0 0 12px;
+      color: #fff;
+    }
+    .at-lead {
+      font-size: 15.5px;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.8;
+      margin: 0 0 32px;
+    }
+    .at-count-line {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 14px 24px;
+      border-radius: 999px;
+      background: rgba(0, 212, 170, 0.08);
+      border: 1px solid rgba(0, 212, 170, 0.28);
+      margin-bottom: 30px;
+    }
+    .at-count-line strong {
+      font-size: 32px;
+      font-weight: 800;
+      color: #5BE3C0;
+      font-variant-numeric: tabular-nums;
+    }
+    .at-count-line span { font-size: 13px; color: rgba(255,255,255,0.65); letter-spacing: 0.5px; }
+    .at-coming {
+      padding: 18px 24px;
+      border-radius: 14px;
+      background: rgba(255, 184, 0, 0.08);
+      border: 1px dashed rgba(255, 184, 0, 0.32);
+      font-size: 13.5px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.7;
+      text-align: left;
+    }
+    .at-coming strong { color: #FFD56A; }
+    .at-actions {
+      margin-top: 32px;
+      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+    }
+    .btn-glow {
+      position: relative; display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 22px; border-radius: 999px; border: none;
+      font-size: 13.5px; font-weight: 500; letter-spacing: 0.5px;
+      font-family: inherit; cursor: pointer; text-decoration: none;
+      color: inherit; transition: all 280ms cubic-bezier(.2,.7,.3,1);
+    }
+    .btn-glow.primary {
+      background: linear-gradient(135deg, #FFB800, #E8500A);
+      color: #fff;
+      box-shadow: 0 12px 32px rgba(232,80,10,0.5);
+    }
+    .btn-glow.primary:hover { transform: translateY(-2px); }
+    .btn-glow.ghost {
+      background: rgba(255,255,255,0.04);
+      color: rgba(255,255,255,0.9);
+      border: 1px solid rgba(255,255,255,0.16);
+    }
+    .btn-glow.ghost:hover { background: rgba(255,255,255,0.08); }
+
+    .at-foot {
+      margin-top: 36px;
+      text-align: center;
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.32);
+      letter-spacing: 0.5px;
+    }
+    .at-foot a { color: rgba(255,184,0,0.85); text-decoration: none; }
+
+    /* === 库详情视图（P3 · 可浏览） === */
+    .at-main.lib-view { max-width: 880px; padding: 56px 36px; }
+    .lib-hero {
+      display: flex; align-items: center; gap: 20px;
+      padding: 26px 30px; border-radius: 24px; margin-bottom: 22px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(24px) saturate(170%); -webkit-backdrop-filter: blur(24px) saturate(170%);
+      position: relative; overflow: hidden;
+    }
+    .lib-hero::before {
+      content: ''; position: absolute; inset: 0; z-index: 0;
+      background: radial-gradient(80% 120% at 0% 0%, color-mix(in srgb, var(--ac,#FFB800) 18%, transparent), transparent 60%);
+    }
+    .lib-hero > * { position: relative; z-index: 1; }
+    .lh-icon {
+      width: 72px; height: 72px; flex: 0 0 auto; border-radius: 20px;
+      background: linear-gradient(135deg, var(--ac,#FFB800), var(--ac2,#E8500A));
+      display: grid; place-items: center; font-size: 38px;
+      box-shadow: 0 14px 32px color-mix(in srgb, var(--ac,#FFB800) 45%, transparent);
+    }
+    .lh-body { flex: 1; min-width: 0; }
+    .lh-eyebrow { font-size: 11px; letter-spacing: 2.5px; color: #FFD56A; text-transform: uppercase; }
+    .lh-name { font-size: 24px; font-weight: 800; margin: 5px 0 6px; color: #fff; }
+    .lh-desc { font-size: 13.5px; color: rgba(255,255,255,0.6); line-height: 1.6; }
+    .lh-back { display: inline-block; margin-top: 10px; font-size: 12px; color: rgba(255,255,255,0.5); text-decoration: none; }
+    .lh-back:hover { color: #FFD56A; }
+    .lh-count { flex: 0 0 auto; text-align: center; padding: 10px 18px; border-radius: 14px;
+      background: rgba(0,212,170,0.08); border: 1px solid rgba(0,212,170,0.28); }
+    .lh-count strong { display: block; font-size: 26px; font-weight: 800; color: #5BE3C0; font-variant-numeric: tabular-nums; }
+    .lh-count span { font-size: 11px; color: rgba(255,255,255,0.55); }
+
+    .atom-list { display: flex; flex-direction: column; gap: 12px; }
+    .atom-row {
+      padding: 18px 20px; border-radius: 16px; text-align: left;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+      transition: border-color 200ms, transform 200ms;
+    }
+    .atom-row:hover { border-color: color-mix(in srgb, var(--ac,#FFB800) 42%, transparent); transform: translateY(-2px); }
+    .ar-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+    .ar-title { font-size: 16px; font-weight: 700; color: #fff; }
+    .ar-type {
+      font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px;
+      color: var(--ac,#FFB800); border: 1px solid color-mix(in srgb, var(--ac,#FFB800) 45%, transparent);
+      background: color-mix(in srgb, var(--ac,#FFB800) 12%, transparent);
+    }
+    .ar-summary { font-size: 13.5px; color: rgba(255,255,255,0.62); line-height: 1.6; margin-bottom: 12px; }
+    .ar-signals { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: rgba(255,255,255,0.5); }
+    .ar-sig { display: flex; align-items: center; gap: 5px; }
+    .ar-sig b { color: #fff; font-variant-numeric: tabular-nums; }
+    .empty-lib { text-align: center; padding: 48px 20px; color: rgba(255,255,255,0.4); font-size: 14px; line-height: 1.8; }
+    .atom-row { cursor: pointer; }
+
+    /* === 原子详情弹层（P4 · tier 分层） === */
+    .atom-overlay { position: fixed; inset: 0; z-index: 300; display: none; }
+    .atom-overlay.show { display: block; }
+    .ao-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.66); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+    .ao-panel {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%) scale(.96);
+      width: min(620px, calc(100vw - 32px)); max-height: 88vh; overflow-y: auto;
+      background: #0d0c0f; border: 1px solid rgba(255,255,255,0.14); border-radius: 22px;
+      box-shadow: 0 40px 100px -20px rgba(0,0,0,0.8); opacity: 0; transition: opacity .25s, transform .25s;
+    }
+    .atom-overlay.show .ao-panel { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+    .ao-head { padding: 24px 26px 18px; border-bottom: 1px solid rgba(255,255,255,0.08); position: sticky; top: 0; background: #0d0c0f; z-index: 2; }
+    .ao-close { position: absolute; top: 18px; right: 20px; width: 30px; height: 30px; border: 0; border-radius: 9px; background: rgba(255,255,255,0.06); color: #fff; font-size: 18px; line-height: 1; cursor: pointer; }
+    .ao-close:hover { background: rgba(255,255,255,0.16); }
+    .ao-title { font-size: 21px; font-weight: 800; margin: 0 0 8px; padding-right: 36px; color: #fff; }
+    .ao-tags-line { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .ao-type { font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; color: var(--ac,#FFB800); border: 1px solid color-mix(in srgb, var(--ac,#FFB800) 45%, transparent); background: color-mix(in srgb, var(--ac,#FFB800) 12%, transparent); }
+    .ao-lib { font-size: 12px; color: rgba(255,255,255,0.45); }
+    .ao-body { padding: 20px 26px 28px; }
+    .ao-sec { margin-bottom: 20px; }
+    .ao-sec-h { font-size: 11.5px; letter-spacing: 1px; color: rgba(255,255,255,0.5); margin-bottom: 8px; text-transform: uppercase; }
+    .ao-summary { font-size: 14.5px; line-height: 1.7; color: rgba(255,255,255,0.85); }
+    .ao-template { font-size: 14px; line-height: 1.7; color: #FFE6B0; background: rgba(255,184,0,0.06); border: 1px solid rgba(255,184,0,0.2); border-radius: 12px; padding: 14px 16px; white-space: pre-wrap; }
+    .ao-vars { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+    .ao-var { font-size: 13px; color: rgba(255,255,255,0.7); }
+    .ao-var b { color: #fff; }
+    .ao-var .ex { color: rgba(255,255,255,0.45); }
+    .ao-chips { display: flex; gap: 7px; flex-wrap: wrap; }
+    .ao-chip { font-size: 12px; padding: 3px 11px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.75); }
+    .ao-signals { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: rgba(255,255,255,0.55); }
+    .ao-signals b { color: #fff; font-variant-numeric: tabular-nums; }
+
+    /* 专业版区块 + 遮罩 */
+    .ao-pro { position: relative; border-radius: 16px; }
+    .ao-pro-inner { display: flex; flex-direction: column; }
+    .ao-pro.locked .ao-pro-inner { filter: blur(5px); pointer-events: none; user-select: none; opacity: .5; }
+    .ao-mask { position: absolute; inset: -6px; z-index: 3; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; text-align: center; padding: 20px; border-radius: 16px; background: radial-gradient(60% 80% at 50% 50%, rgba(13,12,15,0.4), rgba(13,12,15,0.78)); }
+    .ao-pro.locked .ao-mask { display: flex; }
+    .ao-mask .lock-ico { font-size: 32px; }
+    .ao-mask .lock-t { font-size: 15px; font-weight: 700; color: #fff; }
+    .ao-mask .lock-s { font-size: 12.5px; color: rgba(255,255,255,0.6); }
+    .ao-mask .lock-cta { margin-top: 6px; font-size: 12.5px; font-weight: 700; color: #1a130d; background: linear-gradient(135deg,#FFB800,#E8500A); padding: 8px 18px; border-radius: 999px; }
+    .ao-prompt-box { font-size: 13px; line-height: 1.65; color: rgba(255,255,255,0.82); background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 13px 15px; white-space: pre-wrap; }
+    .ao-prompt-box .neg { color: #FF9B9B; }
+    .ao-copy { margin-top: 10px; border: 0; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 700; color: #1a130d; background: linear-gradient(135deg,#FFB800,#E8500A); padding: 9px 16px; border-radius: 10px; }
+    .ao-copy:hover { filter: brightness(1.08); }
+    .ao-list { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+    .ao-list li { font-size: 13px; line-height: 1.55; }
+    .ao-fp li { color: #FFC0A8; }
+    .ao-rp li { color: #A8E6CF; }
+  </style>
+</head>
+<body class="atoms-page">
+  <div class="page-bg" aria-hidden="true">
+    <img src="../assets/hero-hand.png" alt="" />
+  </div>
+
+  <header class="at-header">
+    <a class="at-brand" href="../index.html">
+      <span class="fn-mark">开</span>
+      <span class="fn-name">开物</span>
+      <span class="fn-back">← 回首页</span>
+    </a>
+  </header>
+
+  <main class="at-main lib-view">
+    <div class="lib-hero" id="libHero"></div>
+    <div class="atom-list" id="atomList"></div>
+    <div class="at-foot">
+      开物会记录你的使用数据用于改进方法论模型 · <a href="data-policy.html">数据透明性说明</a>
+    </div>
+  </main>
+
+  <script src="../js/data-layer.js"></script>
+  <script src="../js/common.js"></script>
+  <script src="../js/atoms-data.js"></script>
+  <script>
+    (function(){
+      const LIBS = {
+        motif:      { icon:'📚', name:'卖点提炼公式库', desc:'从产品到爆款卖点的提炼路径', ac:'#FFB800', ac2:'#E8500A' },
+        hook:       { icon:'🎣', name:'钩子开头模板库', desc:'前 3 秒抓住用户的方法', ac:'#FFD56A', ac2:'#FF9665' },
+        storyboard: { icon:'🎬', name:'分镜节奏库',     desc:'不同时长 / 平台的节奏与运镜模板',  ac:'#C97AF2', ac2:'#7E40C6' },
+        style:      { icon:'🎨', name:'风格锁定词库',   desc:'日系 / 国潮 / 赛博等风格的提示词组合', ac:'#FF6B9B', ac2:'#C81F5E' },
+        platform:   { icon:'📱', name:'平台调性差异指南', desc:'抖音 / 小红书 / 视频号 / 快手 调性差异', ac:'#7C9DFF', ac2:'#3A5FE5' },
+        case:       { icon:'🔥', name:'真实爆款案例库', desc:'互联网上拾取并拆解过的成功案例', ac:'#FF7A3D', ac2:'#C81F5E' },
+        rescue:     { icon:'🚑', name:'失败修复库',     desc:'常见翻车症状的诊断与救场方案', ac:'#00D4AA', ac2:'#00B4D8' }
+      };
+      const type = KW.query('type') || 'motif';
+      const lib = LIBS[type] || LIBS.motif;
+
+      function esc(s){
+        return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){
+          return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c];
+        });
+      }
+      function sigVal(v){ return (v == null) ? '—' : v; }
+
+      const atoms = window.KW_DL ? (KW_DL.getAtomCards({ library: type }) || []) : [];
+
+      const hero = document.getElementById('libHero');
+      const list = document.getElementById('atomList');
+      hero.style.setProperty('--ac', lib.ac);
+      hero.style.setProperty('--ac2', lib.ac2);
+      hero.innerHTML =
+        '<div class="lh-icon">' + lib.icon + '</div>' +
+        '<div class="lh-body">' +
+          '<div class="lh-eyebrow">ATOM LIBRARY · ' + type.toUpperCase() + '</div>' +
+          '<div class="lh-name">' + lib.name + '</div>' +
+          '<div class="lh-desc">' + lib.desc + '</div>' +
+          '<a class="lh-back" href="../index.html">← 回原子库总览</a>' +
+          (type === 'rescue' ? ' <a class="lh-back" href="rescue.html" style="margin-left:14px">🚑 进入急救站 →</a>' : '') +
+        '</div>' +
+        '<div class="lh-count"><strong>' + atoms.length + '</strong><span>条原子</span></div>';
+
+      if (!atoms.length){
+        list.innerHTML = '<div class="empty-lib">🌱 该库原子正在沉淀中<br/>团队预置与社区投稿会陆续注入，稍后再来看看</div>';
+      } else {
+        list.innerHTML = atoms.map(function(a){
+          const s = a.signals || {};
+          const succ = (s.successRate != null) ? Math.round(s.successRate * 100) + '%' : '—';
+          return '<article class="atom-row" style="--ac:' + lib.ac + ';--ac2:' + lib.ac2 + '" data-id="' + esc(a.id) + '">' +
+            '<div class="ar-top">' +
+              '<span class="ar-title">' + esc(a.title) + '</span>' +
+              '<span class="ar-type">' + esc(a.atomType || '') + '</span>' +
+            '</div>' +
+            '<div class="ar-summary">' + esc(a.summary || '') + '</div>' +
+            '<div class="ar-signals">' +
+              '<span class="ar-sig">⭐ 评分 <b>' + sigVal(s.score) + '</b></span>' +
+              '<span class="ar-sig">🔄 使用 <b>' + sigVal(s.usageCount) + '</b></span>' +
+              '<span class="ar-sig">✅ 成功率 <b>' + succ + '</b></span>' +
+              '<span class="ar-sig">🌿 新鲜度 <b>' + sigVal(s.freshnessScore) + '</b></span>' +
+            '</div>' +
+          '</article>';
+        }).join('');
+      }
+
+      if (window.KW_DL) KW_DL.logEvent('atoms.viewed', { type: type, count: atoms.length });
+
+      // ===== 原子详情弹层（P4 · tier 分层） =====
+      const tier = (window.KW_DL && KW_DL.getMembership) ? KW_DL.getMembership().key : 'free';
+      const isPro = (tier === 'pro' || tier === 'signed');  // 专业版/签约可解锁深层
+      let overlay = null;
+
+      function chips(arr){ return (arr || []).map(function(x){ return '<span class="ao-chip">' + esc(x) + '</span>'; }).join(''); }
+      function liList(arr, cls){ return '<ul class="ao-list ' + cls + '">' + (arr || []).map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'; }
+
+      function buildOverlay(){
+        overlay = document.createElement('div');
+        overlay.className = 'atom-overlay';
+        overlay.innerHTML = '<div class="ao-backdrop"></div><div class="ao-panel" role="dialog" aria-modal="true"></div>';
+        document.body.appendChild(overlay);
+        overlay.querySelector('.ao-backdrop').addEventListener('click', closeDetail);
+        document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeDetail(); });
+      }
+      function closeDetail(){ if (overlay) overlay.classList.remove('show'); }
+
+      function openDetail(a){
+        if (!overlay) buildOverlay();
+        const s = a.signals || {};
+        const succ = (s.successRate != null) ? Math.round(s.successRate * 100) + '%' : '—';
+        const vars = (a.variables || []).map(function(v){
+          return '<div class="ao-var">• <b>{' + esc(v.name) + '}</b> <span class="ex">例：' + esc(v.example) + '</span></div>';
+        }).join('');
+
+        // 专业版区块：解锁→真内容；未解锁→占位文案（真内容不进 DOM，遮罩只是视觉）
+        const proInner = isPro
+          ? (
+              '<div class="ao-sec"><div class="ao-sec-h">🔑 提示词包（正向 + 反向）</div>' +
+                '<div class="ao-prompt-box">' + esc(a.promptTemplate || '—') +
+                  (a.negativePrompt ? '\n\n<span class="neg">⊘ 反向：' + esc(a.negativePrompt) + '</span>' : '') +
+                '</div>' +
+                '<button class="ao-copy" data-copy>📋 一键复制提示词包</button>' +
+              '</div>' +
+              '<div class="ao-sec"><div class="ao-sec-h">🧠 深层机制</div><div class="ao-summary">' + esc(a.mechanism || '—') + '</div></div>' +
+              '<div class="ao-sec"><div class="ao-sec-h">⚠️ 常见翻车点</div>' + liList(a.failurePatterns, 'ao-fp') + '</div>' +
+              '<div class="ao-sec"><div class="ao-sec-h">🩹 救场建议</div>' + liList(a.repairSuggestions, 'ao-rp') + '</div>'
+            )
+          : (
+              '<div class="ao-sec"><div class="ao-sec-h">🔑 提示词包（正向 + 反向）</div><div class="ao-prompt-box">专业版可见完整提示词包 · 正向 + 反向 · 一键复制喂给 AI。</div></div>' +
+              '<div class="ao-sec"><div class="ao-sec-h">🧠 深层机制</div><div class="ao-summary">专业版展开这条原子背后的心理学 / 传播学机制。</div></div>' +
+              '<div class="ao-sec"><div class="ao-sec-h">⚠️ 常见翻车点 & 🩹 救场建议</div><div class="ao-summary">专业版提供真实翻车点与对应救场建议。</div></div>'
+            );
+
+        const panel = overlay.querySelector('.ao-panel');
+        panel.style.setProperty('--ac', lib.ac);
+        panel.style.setProperty('--ac2', lib.ac2);
+        panel.innerHTML =
+          '<div class="ao-head">' +
+            '<button class="ao-close" aria-label="关闭">&times;</button>' +
+            '<h2 class="ao-title">' + esc(a.title) + '</h2>' +
+            '<div class="ao-tags-line"><span class="ao-type">' + esc(a.atomType || '') + '</span><span class="ao-lib">' + esc(a.library || '') + '</span></div>' +
+          '</div>' +
+          '<div class="ao-body">' +
+            // —— 免费可见 ——
+            '<div class="ao-sec"><div class="ao-sec-h">一句话</div><div class="ao-summary">' + esc(a.summary || '') + '</div></div>' +
+            '<div class="ao-sec"><div class="ao-sec-h">可复用模板</div><div class="ao-template">' + esc(a.template || '—') + '</div>' +
+              (vars ? '<div class="ao-vars">' + vars + '</div>' : '') + '</div>' +
+            '<div class="ao-sec"><div class="ao-sec-h">适用领域</div><div class="ao-chips">' + chips(a.domains) + '</div></div>' +
+            '<div class="ao-sec"><div class="ao-sec-h">标签</div><div class="ao-chips">' + chips(a.tags) + '</div></div>' +
+            '<div class="ao-sec"><div class="ao-sec-h">三维信号</div><div class="ao-signals">' +
+              '<span>⭐ 评分 <b>' + sigVal(s.score) + '</b></span>' +
+              '<span>🔄 使用 <b>' + sigVal(s.usageCount) + '</b></span>' +
+              '<span>✅ 成功率 <b>' + succ + '</b></span>' +
+              '<span>🌿 新鲜度 <b>' + sigVal(s.freshnessScore) + '</b></span>' +
+            '</div></div>' +
+            // —— 专业版深层 ——
+            '<div class="ao-sec-h">专业版 · 深度解构</div>' +
+            '<div class="ao-pro' + (isPro ? '' : ' locked') + '">' +
+              '<div class="ao-pro-inner">' + proInner + '</div>' +
+              '<div class="ao-mask">' +
+                '<span class="lock-ico">🔒</span>' +
+                '<span class="lock-t">专业版解锁深度解构</span>' +
+                '<span class="lock-s">提示词包 · 深层机制 · 失败修复建议</span>' +
+                '<span class="lock-cta">升级专业版 →</span>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+
+        panel.querySelector('.ao-close').addEventListener('click', closeDetail);
+        if (isPro) {
+          const copyBtn = panel.querySelector('[data-copy]');
+          if (copyBtn) copyBtn.addEventListener('click', function(){
+            const pack = '【提示词】\n' + (a.promptTemplate || '') + '\n\n【反向提示词】\n' + (a.negativePrompt || '');
+            if (KW.copy) KW.copy(pack); else KW.toast('已复制', 'success');
+            if (window.KW_DL) KW_DL.logEvent('atom.prompt.copy', { id: a.id });
+          });
+        } else {
+          const mask = panel.querySelector('.ao-mask');
+          if (mask) mask.addEventListener('click', function(){
+            if (window.KW_DL) KW_DL.logEvent('atom.locked.click', { id: a.id, tier: tier });
+            if (KW.showMemberModal) KW.showMemberModal('pro', '原子深度解构');
+          });
+        }
+
+        overlay.classList.add('show');
+        if (window.KW_DL) KW_DL.logEvent('atom.detail.view', { id: a.id, library: type, locked: !isPro });
+      }
+
+      // 列表卡片点击 → 打开详情
+      list.addEventListener('click', function(e){
+        const row = e.target.closest('.atom-row');
+        if (!row) return;
+        const a = atoms.find(function(x){ return x.id === row.dataset.id; });
+        if (a) openDetail(a);
+      });
+    })();
+  </script>
+  <script src="../js/widget.js"></script>
+</body>
+</html>

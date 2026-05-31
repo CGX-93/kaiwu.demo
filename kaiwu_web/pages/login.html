@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>开物 · 登录</title>
+  <link rel="stylesheet" href="../css/common.css" />
+  <style>
+    body.auth-page{background:#050505;color:#fff;min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;}
+    .page-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+    .page-bg img{width:130%;height:130%;position:absolute;top:-15%;left:-15%;object-fit:cover;object-position:center 40%;filter:blur(110px) brightness(0.5);opacity:0.35;}
+    .page-bg::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 40%,transparent 0%,rgba(5,5,5,0.6) 60%,rgba(5,5,5,0.95) 100%);}
+    .auth-wrap{position:relative;z-index:2;flex:1;display:flex;align-items:center;justify-content:center;padding:24px;}
+    .auth-card{width:100%;max-width:400px;padding:40px 36px;border-radius:24px;background:rgba(255,255,255,0.04);backdrop-filter:blur(26px) saturate(160%);-webkit-backdrop-filter:blur(26px) saturate(160%);border:1px solid rgba(255,255,255,0.12);box-shadow:0 40px 90px -20px rgba(0,0,0,0.7);}
+    .auth-logo{width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,#FFB800,#E8500A);display:grid;place-items:center;font-size:26px;font-weight:800;color:#fff;margin:0 auto 18px;box-shadow:0 14px 32px rgba(232,80,10,0.5);}
+    .auth-title{font-size:24px;font-weight:800;text-align:center;margin:0 0 6px;}
+    .auth-sub{font-size:13px;color:rgba(255,255,255,0.55);text-align:center;margin:0 0 28px;line-height:1.6;}
+    .auth-label{font-size:12px;color:rgba(255,255,255,0.55);margin:14px 0 6px;}
+    .auth-input{width:100%;padding:13px 16px;border-radius:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;transition:border-color 200ms;}
+    .auth-input:focus{outline:none;border-color:rgba(232,80,10,0.55);background:rgba(255,255,255,0.07);}
+    .code-row{display:flex;gap:10px;}
+    .code-row .auth-input{flex:1;}
+    .code-btn{padding:0 16px;border-radius:12px;border:1px solid rgba(232,80,10,0.45);background:rgba(232,80,10,0.12);color:#FFD56A;font-family:inherit;font-size:13px;cursor:pointer;white-space:nowrap;transition:all 200ms;}
+    .code-btn:hover:not(:disabled){background:rgba(232,80,10,0.2);}
+    .code-btn:disabled{opacity:0.5;cursor:not-allowed;}
+    .auth-submit{width:100%;margin-top:24px;padding:14px;border-radius:999px;border:none;background:linear-gradient(135deg,#FFB800,#E8500A);color:#fff;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 14px 32px rgba(232,80,10,0.5);transition:transform 220ms;}
+    .auth-submit:hover{transform:translateY(-2px);}
+    .auth-alt{text-align:center;margin-top:20px;font-size:13px;color:rgba(255,255,255,0.5);}
+    .auth-alt a{color:#FFD56A;text-decoration:none;}
+    .auth-skip{display:block;text-align:center;margin-top:16px;font-size:12.5px;color:rgba(255,255,255,0.4);text-decoration:none;}
+    .auth-skip:hover{color:rgba(255,255,255,0.7);}
+    .auth-note{margin-top:22px;padding:12px 14px;border-radius:10px;background:rgba(0,212,170,0.06);border:1px dashed rgba(0,212,170,0.28);font-size:11.5px;color:rgba(255,255,255,0.6);line-height:1.6;text-align:center;}
+  </style>
+</head>
+<body class="auth-page">
+  <div class="page-bg" aria-hidden="true"><img src="../assets/hero-hand.png" alt="" /></div>
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">开</div>
+      <h1 class="auth-title">登录开物</h1>
+      <p class="auth-sub">手机号 + 验证码即可 · 无需密码<br/>登录后可跨设备同步你的造物档案</p>
+
+      <div class="auth-label">手机号</div>
+      <input type="tel" class="auth-input" id="phone" placeholder="请输入手机号" maxlength="11" />
+
+      <div class="auth-label">验证码</div>
+      <div class="code-row">
+        <input type="text" class="auth-input" id="code" placeholder="6 位验证码" maxlength="6" />
+        <button class="code-btn" id="codeBtn">获取验证码</button>
+      </div>
+
+      <button class="auth-submit" id="loginBtn">登录</button>
+
+      <div class="auth-alt">还没有账号？<a href="register.html">去注册</a></div>
+      <a class="auth-skip" href="../index.html">先逛逛，暂不登录 →</a>
+
+      <div class="auth-note">🌱 现阶段开物所有功能都可匿名使用 · 登录只用于跨设备同步和会员/签约场景</div>
+    </div>
+  </div>
+
+  <script src="../js/data-layer.js"></script>
+  <script src="../js/common.js"></script>
+  <script>
+    (function () {
+      var countdown = 0, timer = null;
+      var codeBtn = document.getElementById('codeBtn');
+      codeBtn.addEventListener('click', function () {
+        var phone = document.getElementById('phone').value.trim();
+        if (!/^1\d{10}$/.test(phone)) { KW.toast('请输入有效的 11 位手机号', 'error'); return; }
+        countdown = 60; codeBtn.disabled = true;
+        codeBtn.textContent = countdown + 's 后重发';
+        KW.toast('验证码已发送（演示：随便填 6 位即可）', 'success');
+        timer = setInterval(function () {
+          countdown--; codeBtn.textContent = countdown + 's 后重发';
+          if (countdown <= 0) { clearInterval(timer); codeBtn.disabled = false; codeBtn.textContent = '获取验证码'; }
+        }, 1000);
+      });
+
+      document.getElementById('loginBtn').addEventListener('click', function () {
+        var phone = document.getElementById('phone').value.trim();
+        var code = document.getElementById('code').value.trim();
+        if (!/^1\d{10}$/.test(phone)) { KW.toast('请输入有效手机号', 'error'); return; }
+        if (!/^\d{6}$/.test(code)) { KW.toast('请输入 6 位验证码', 'error'); return; }
+        KW_DL.login(phone);
+        KW.toast('✓ 登录成功', 'success');
+        setTimeout(function () { location.href = 'profile.html'; }, 700);
+      });
+    })();
+  </script>
+  <script src="../js/widget.js"></script>
+</body>
+</html>

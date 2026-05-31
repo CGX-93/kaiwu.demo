@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>开物 · 我的需求很特别（开发中）</title>
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/question.css" />
+  <style>
+    .custom-main {
+      position: relative; z-index: 2;
+      padding: 120px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .custom-card {
+      width: 100%;
+      max-width: 680px;
+      padding: 44px 40px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      text-align: center;
+      box-shadow: 0 24px 60px -20px rgba(0,0,0,0.6);
+    }
+    .custom-icon {
+      width: 86px; height: 86px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(255, 184, 0, 0.22), rgba(232, 80, 10, 0.18));
+      border: 1px solid rgba(255, 184, 0, 0.4);
+      margin: 0 auto 26px;
+      display: grid; place-items: center;
+      font-size: 42px;
+      box-shadow: 0 16px 36px rgba(232, 80, 10, 0.35);
+    }
+    .custom-pill {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: rgba(232, 80, 10, 0.14);
+      color: #FFD56A;
+      font-size: 11.5px;
+      letter-spacing: 2.5px;
+      border: 1px solid rgba(232, 80, 10, 0.32);
+      margin-bottom: 18px;
+      text-transform: uppercase;
+    }
+    .custom-title {
+      font-size: 34px;
+      font-weight: 800;
+      margin: 0 0 14px;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+    .custom-title em {
+      font-style: normal;
+      background: linear-gradient(135deg, #FFD56A, #E8500A);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .custom-lead {
+      font-size: 15px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.8;
+      margin: 0 0 28px;
+    }
+    .custom-form {
+      text-align: left;
+      margin-top: 20px;
+    }
+    .custom-form label {
+      display: block;
+      font-size: 13px;
+      color: rgba(255,255,255,0.65);
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+    .custom-form textarea {
+      width: 100%;
+      padding: 18px 20px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #fff;
+      font-size: 15px;
+      font-family: inherit;
+      line-height: 1.7;
+      min-height: 130px;
+      resize: vertical;
+      box-sizing: border-box;
+      transition: all 220ms;
+    }
+    .custom-form textarea:focus {
+      outline: none;
+      border-color: rgba(232,80,10,0.55);
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 0 0 1px rgba(232,80,10,0.4);
+    }
+    .custom-actions {
+      margin-top: 22px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .custom-foot {
+      margin-top: 28px;
+      padding-top: 22px;
+      border-top: 1px dashed rgba(255,255,255,0.10);
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.7;
+    }
+    .custom-foot strong { color: #FFB800; }
+    .custom-thanks {
+      display: none;
+      margin-top: 18px;
+      padding: 16px 20px;
+      border-radius: 12px;
+      background: rgba(0, 212, 170, 0.08);
+      border: 1px dashed rgba(0, 212, 170, 0.42);
+      color: rgba(255,255,255,0.85);
+      font-size: 13.5px;
+      line-height: 1.7;
+    }
+    .custom-thanks.show { display: block; animation: fadeIn 320ms ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="qa-page">
+  <div class="page-bg" aria-hidden="true">
+    <img src="../assets/hero-hand.png" alt="" />
+  </div>
+
+  <header class="qa-header">
+    <a class="qa-brand" href="../index.html">
+      <span class="fn-mark">开</span>
+      <span class="fn-name">开物</span>
+      <span class="fn-back">← 回首页</span>
+    </a>
+    <div class="qa-progress" id="qaProgress"></div>
+    <div class="qa-actions">
+      <a class="btn-glow ghost sm" href="question.html?dir=ecom">使用常规问答 →</a>
+    </div>
+  </header>
+
+  <main class="custom-main">
+    <div class="custom-card">
+      <div class="custom-icon">⚙️</div>
+      <span class="custom-pill">CUSTOM · 兜底入口</span>
+      <h1 class="custom-title">我的需求<em>很特别</em></h1>
+      <p class="custom-lead">
+        如果四大方向都不完全合你的场景——把它写在下面。<br/>
+        这一功能正在开发，你写的内容会作为长尾需求训练样本，<br/>
+        帮我们决定下一个上线的方向。
+      </p>
+
+      <form class="custom-form" id="customForm">
+        <label for="customInput">你的场景 / 需求</label>
+        <textarea id="customInput" placeholder="例如：我做的是宠物殡葬服务，标准电商带货话术太轻浮 · 我想做面向 60+ 中老年的健康科普 · 想做一个寺庙周边的内容矩阵 ..."></textarea>
+
+        <div class="custom-actions">
+          <a class="btn-glow ghost" href="../index.html">先回首页</a>
+          <button type="submit" class="btn-glow primary">提交需求 <span class="arrow">→</span></button>
+        </div>
+      </form>
+
+      <div class="custom-thanks" id="customThanks">
+        ✓ 已收到你的需求 · 已写入长尾训练数据 · 我们会优先评估高频场景
+      </div>
+
+      <div class="custom-foot">
+        当前阶段，这个入口属于 <strong>"该功能开发中"</strong> 的兜底页。<br/>
+        你提交的内容会匿名存到本机数据库（标签 <code>longtail-custom</code>），<br/>
+        未来上线后端时会用于训练定制问答路径。
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/data-layer.js"></script>
+  <script src="../js/common.js"></script>
+  <script>
+    // 进入即埋点
+    if (window.KW_DL) KW_DL.logEvent('custom.entry.viewed', {});
+
+    document.getElementById('customForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const text = document.getElementById('customInput').value.trim();
+      if (!text) {
+        KW.toast('写两句话再提交吧');
+        return;
+      }
+      if (window.KW_DL) {
+        KW_DL.saveAtom({
+          type: 'longtail',
+          content: { text, source: 'custom-entry' },
+          source: 'user',
+          tags: ['longtail', 'custom-entry']
+        });
+        KW_DL.logEvent('custom.entry.submitted', { textLen: text.length });
+      }
+      document.getElementById('customInput').value = '';
+      document.getElementById('customThanks').classList.add('show');
+      KW.toast('感谢！已记入长尾需求训练数据', 'success');
+    });
+  </script>
+  <script src="../js/widget.js"></script>
+</body>
+</html>

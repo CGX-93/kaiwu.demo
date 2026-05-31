@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>开物 · 数据透明性说明</title>
+  <link rel="stylesheet" href="../css/common.css" />
+  <style>
+    body.policy-page {
+      background: #050505;
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .page-bg {
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none; overflow: hidden;
+    }
+    .page-bg img {
+      width: 130%; height: 130%;
+      position: absolute; top: -15%; left: -15%;
+      object-fit: cover; object-position: center 30%;
+      filter: blur(120px) brightness(0.5);
+      opacity: 0.25;
+    }
+    .page-bg::after {
+      content:''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 70% at 50% 30%, transparent 0%, rgba(5,5,5,0.7) 70%, rgba(5,5,5,0.95) 100%);
+    }
+    .pol-header {
+      position: relative; z-index: 2;
+      padding: 18px 36px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      background: rgba(5,5,5,0.7);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .pol-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .pol-brand .fn-mark {
+      width: 34px; height: 34px;
+      display: grid; place-items: center;
+      background: linear-gradient(135deg, #FFB800, #E8500A);
+      color: #fff; border-radius: 10px;
+      font-weight: 800; font-size: 15px;
+      box-shadow: 0 8px 20px rgba(232,80,10,0.45);
+    }
+    .pol-brand .fn-name {
+      font-size: 16px; font-weight: 700; letter-spacing: 1.4px; color: #fff;
+    }
+    .pol-brand .fn-back {
+      font-size: 12px; color: rgba(255,255,255,0.4); margin-left: 4px;
+    }
+    .pol-main {
+      position: relative; z-index: 2;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 80px 36px;
+    }
+    .pol-eyebrow {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(232, 80, 10, 0.16);
+      color: #FFD56A;
+      font-size: 12px;
+      letter-spacing: 3px;
+      margin-bottom: 22px;
+      border: 1px solid rgba(232, 80, 10, 0.32);
+    }
+    .pol-title {
+      font-size: 44px;
+      font-weight: 800;
+      margin: 0 0 18px;
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+    }
+    .pol-title em {
+      font-style: normal;
+      background: linear-gradient(135deg, #FFD56A, #E8500A);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .pol-lead {
+      font-size: 17px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.8;
+      margin: 0 0 56px;
+    }
+    .pol-section {
+      padding: 28px 32px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(22px);
+      border: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 18px;
+    }
+    .pol-section h2 {
+      font-size: 20px;
+      margin: 0 0 14px;
+      color: #fff;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .pol-section h2 .ic { font-size: 22px; }
+    .pol-section p, .pol-section li {
+      font-size: 14.5px;
+      color: rgba(255,255,255,0.78);
+      line-height: 1.85;
+      margin: 0 0 10px;
+    }
+    .pol-section ul { padding-left: 22px; margin: 0; }
+    .pol-section code {
+      background: rgba(0,0,0,0.4);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #FFD56A;
+      border: 1px solid rgba(255,255,255,0.08);
+      font-family: ui-monospace, monospace;
+    }
+    .pol-cta {
+      margin-top: 36px;
+      padding: 24px 28px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(232,80,10,0.18), rgba(255,184,0,0.10));
+      border: 1px solid rgba(232,80,10,0.4);
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    .pol-cta .label { color: rgba(255,255,255,0.9); font-size: 14.5px; line-height: 1.7; }
+    .pol-cta-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn-pol {
+      padding: 12px 22px;
+      border-radius: 999px;
+      border: none;
+      font-family: inherit;
+      font-size: 13.5px;
+      cursor: pointer;
+      transition: all 240ms ease;
+    }
+    .btn-pol.primary {
+      background: linear-gradient(135deg, #FFB800, #E8500A);
+      color: #fff;
+      box-shadow: 0 10px 28px rgba(232,80,10,0.5);
+    }
+    .btn-pol.primary:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(232,80,10,0.65); }
+    .btn-pol.ghost {
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.85);
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+    .btn-pol.ghost:hover { background: rgba(255,255,255,0.1); }
+    .pol-foot {
+      margin-top: 80px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body class="policy-page">
+  <div class="page-bg" aria-hidden="true">
+    <img src="../assets/hero-hand.png" alt="" />
+  </div>
+
+  <header class="pol-header">
+    <a class="pol-brand" href="../index.html">
+      <span class="fn-mark">开</span>
+      <span class="fn-name">开物</span>
+      <span class="fn-back">← 回首页</span>
+    </a>
+  </header>
+
+  <main class="pol-main">
+    <span class="pol-eyebrow">TRANSPARENCY · 数据透明</span>
+    <h1 class="pol-title">你的数据，<em>归你自己。</em></h1>
+    <p class="pol-lead">
+      开物会记录你在站内的关键行为，用来改进方法论模型。这页讲清楚：<strong>我们收什么、不收什么、怎么用、你怎么拿回</strong>。这是一个开发中的占位说明，正式版会在下一阶段补全。
+    </p>
+
+    <section class="pol-section">
+      <h2><span class="ic">📥</span> 我们会记录的</h2>
+      <ul>
+        <li>你生成的工单（输入回答 + 输出 10 模块 + 你的反馈）— <code>kaiwu_orders</code></li>
+        <li>你查阅失败修复库的症状与方案效果（有用 / 部分有用 / 没用）— <code>kaiwu_rescue_logs</code></li>
+        <li>你提交的方法论原子（卖点 / 钩子 / 分镜 / 风格 / 修复）— <code>kaiwu_atoms</code></li>
+        <li>你提交的爆款解析记录（输入链接 / 描述 + 提取元素）— <code>kaiwu_decode_records</code></li>
+        <li>关键页面访问 / 点击事件，用于优化体验 — <code>kaiwu_events</code></li>
+        <li>一个仅本机生成的匿名设备 ID — <code>kaiwu_meta.deviceId</code></li>
+      </ul>
+    </section>
+
+    <section class="pol-section">
+      <h2><span class="ic">🚫</span> 我们不会收的</h2>
+      <ul>
+        <li>不收任何账号 / 实名 / 手机号 / 邮箱</li>
+        <li>不读取你电脑里其他网站的内容</li>
+        <li>不和广告商共享</li>
+        <li>不用作训练数据之外的任何用途</li>
+      </ul>
+    </section>
+
+    <section class="pol-section">
+      <h2><span class="ic">🎯</span> 用来做什么</h2>
+      <ul>
+        <li>训练 5 个领域专项模型：卖点提炼 / 钩子开头 / 分镜节奏 / 风格锁定词 / 失败修复</li>
+        <li>统计哪些模板最常被采用、哪些急救方案真正有效</li>
+        <li>识别工单输出里需要改进的环节（你点 👎 的模块）</li>
+      </ul>
+    </section>
+
+    <section class="pol-section">
+      <h2><span class="ic">🛡️</span> 你的权利</h2>
+      <ul>
+        <li><strong>查</strong>：所有数据都存在你的浏览器 localStorage 里，你随时可在历史页一键查看</li>
+        <li><strong>导出</strong>：一键下载完整 JSON，自己留底或带走</li>
+        <li><strong>删除</strong>：随时清空全部数据，删完即彻底消失</li>
+        <li>现阶段未上传任何数据到服务器；未来上线后端时，会再次明确通知</li>
+      </ul>
+    </section>
+
+    <div class="pol-cta">
+      <div class="label">现在就操作？</div>
+      <div class="pol-cta-actions">
+        <button class="btn-pol primary" id="btnExport">导出我的全部数据 (JSON)</button>
+        <button class="btn-pol ghost" id="btnClear">清空我的全部数据</button>
+      </div>
+    </div>
+
+    <div class="pol-foot">
+      本页为阶段一占位版本 · 正式版上线时将补全更细颗粒条款
+    </div>
+  </main>
+
+  <script src="../js/data-layer.js"></script>
+  <script src="../js/common.js"></script>
+  <script>
+    document.getElementById('btnExport').addEventListener('click', () => {
+      KW_DL.downloadAllData();
+      KW.toast('已开始下载你的全部数据 JSON', 'success');
+    });
+    document.getElementById('btnClear').addEventListener('click', () => {
+      if (confirm('确定清空全部数据？此操作不可撤销。')) {
+        KW_DL.clearAllData();
+        KW.toast('已清空全部数据', 'success');
+      }
+    });
+  </script>
+  <script src="../js/widget.js"></script>
+</body>
+</html>

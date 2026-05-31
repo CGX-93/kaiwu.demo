@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>开物 · 引导式问答</title>
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/question.css" />
+</head>
+<body class="qa-page">
+
+  <!-- 全页氛围背景 -->
+  <div class="page-bg" aria-hidden="true">
+    <img src="../assets/hero-hand.png" alt="" />
+  </div>
+
+  <!-- 顶部固定栏 -->
+  <header class="qa-header">
+    <a class="qa-brand" href="../index.html" title="回到首页">
+      <span class="fn-mark">开</span>
+      <span class="fn-name">开物</span>
+      <span class="fn-back">← 回首页</span>
+    </a>
+
+    <div class="qa-progress" id="qaProgress" aria-label="进度"></div>
+
+    <div class="qa-actions">
+      <button class="btn-glow ghost sm" id="btnSaveDraft">保存草稿</button>
+      <button class="btn-glow ghost sm" id="btnExit">退出</button>
+    </div>
+  </header>
+
+  <!-- 主体 -->
+  <main class="qa-main">
+    <div class="qa-shell">
+
+      <div class="qa-stage" id="stage" aria-live="polite">
+        <!-- 题目由 JS 渲染 -->
+      </div>
+
+      <!-- 底部操作 -->
+      <div class="qa-nav">
+        <button class="btn-glow ghost" id="btnPrev" disabled>← 上一步</button>
+
+        <div class="qa-step-hint">
+          <kbd>↑</kbd><kbd>↓</kbd> 选项 · <kbd>1-9</kbd> 快速选 · <kbd>Enter</kbd> 下一步
+        </div>
+
+        <button class="btn-glow primary" id="btnNext" disabled>
+          下一步 <span class="arrow">→</span>
+        </button>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="../js/data-layer.js"></script>
+  <script src="../js/common.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/question.js"></script>
+  <script src="../js/widget.js"></script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>开物 · 造物学院</title>
+  <link rel="stylesheet" href="../css/common.css" />
+  <style>
+    body.academy-page{background:#050505;color:#fff;min-height:100vh;overflow-x:hidden;}
+    .page-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+    .page-bg img{width:130%;height:130%;position:absolute;top:-15%;left:-15%;object-fit:cover;object-position:center 40%;filter:blur(120px) brightness(0.45);opacity:0.32;}
+    .page-bg::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 36%,rgba(255,184,0,0.06) 0%,rgba(5,5,5,0.7) 60%,rgba(5,5,5,0.96) 100%);}
+
+    /* 顶部 */
+    .ac-header{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;padding:20px 26px;max-width:1080px;margin:0 auto;}
+    .ac-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;}
+    .ac-brand .fn-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#FFB800,#E8500A);display:grid;place-items:center;font-weight:800;color:#fff;font-size:18px;}
+    .ac-brand .fn-name{font-size:17px;font-weight:800;}
+    .ac-brand .fn-back{font-size:12.5px;color:rgba(255,255,255,0.45);margin-left:6px;}
+    .ac-nav-actions{display:flex;gap:10px;}
+
+    /* main */
+    .ac-main{position:relative;z-index:2;max-width:1080px;margin:0 auto;padding:8px 26px 80px;}
+
+    /* hero */
+    .ac-hero{text-align:center;padding:30px 0 26px;}
+    .ac-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:2px;color:rgba(255,184,0,0.85);margin-bottom:14px;}
+    .ac-eyebrow .dot-pulse{width:7px;height:7px;border-radius:50%;background:#FFB800;box-shadow:0 0 0 0 rgba(255,184,0,0.6);animation:acPulse 2s infinite;}
+    @keyframes acPulse{0%{box-shadow:0 0 0 0 rgba(255,184,0,0.5)}70%{box-shadow:0 0 0 9px rgba(255,184,0,0)}100%{box-shadow:0 0 0 0 rgba(255,184,0,0)}}
+    .ac-title{font-size:34px;font-weight:800;margin:0 0 10px;}
+    .ac-title em{font-style:normal;background:linear-gradient(135deg,#FFB800,#E8500A);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+    .ac-sub{font-size:14px;color:rgba(255,255,255,0.6);margin:0;}
+
+    /* 分类 Tab */
+    .ac-tabs{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:24px 0 28px;}
+    .ac-tab{padding:9px 18px;border-radius:999px;border:1px solid rgba(255,255,255,0.14);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.65);font-family:inherit;font-size:13.5px;cursor:pointer;transition:all 200ms;}
+    .ac-tab:hover{color:#fff;border-color:rgba(255,184,0,0.4);}
+    .ac-tab.active{background:linear-gradient(135deg,#FFB800,#E8500A);border-color:transparent;color:#1a130d;font-weight:700;box-shadow:0 8px 22px rgba(232,80,10,0.32);}
+
+    /* 课程网格 */
+    .ac-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;}
+    .course-card{display:flex;flex-direction:column;border-radius:18px;overflow:hidden;background:rgba(255,255,255,0.04);backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);border:1px solid rgba(255,255,255,0.1);cursor:pointer;transition:transform 220ms,border-color 220ms,box-shadow 220ms;}
+    .course-card:hover{transform:translateY(-4px);border-color:rgba(255,184,0,0.35);box-shadow:0 22px 50px -18px rgba(0,0,0,0.7);}
+
+    .cc-cover{height:128px;display:grid;place-items:center;font-size:52px;position:relative;}
+    .cc-cat-tag{position:absolute;top:12px;left:12px;font-size:11px;padding:3px 10px;border-radius:999px;background:rgba(0,0,0,0.4);color:rgba(255,255,255,0.85);backdrop-filter:blur(6px);}
+    .cc-access{position:absolute;top:12px;right:12px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;}
+    .cc-access.free{background:rgba(0,212,170,0.18);color:#3DE6C0;border:1px solid rgba(0,212,170,0.45);}
+    .cc-access.paid{background:rgba(255,184,0,0.16);color:#FFCB4D;border:1px solid rgba(255,184,0,0.4);}
+
+    .cc-body{padding:16px 18px 18px;display:flex;flex-direction:column;flex:1;}
+    .cc-name{font-size:16px;font-weight:700;line-height:1.45;margin:0 0 12px;}
+    .cc-meta{display:flex;align-items:center;gap:10px;font-size:12.5px;color:rgba(255,255,255,0.5);margin-bottom:14px;flex-wrap:wrap;}
+    .cc-meta .dot{opacity:0.4;}
+    .cc-foot{margin-top:auto;display:flex;align-items:flex-end;justify-content:space-between;}
+    .cc-price{display:flex;flex-direction:column;gap:2px;}
+    .cc-price .big{font-size:18px;font-weight:800;}
+    .cc-price .big.free-txt{background:linear-gradient(135deg,#00D4AA,#00B4D8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+    .cc-price .note{font-size:11px;color:rgba(255,255,255,0.4);}
+    .cc-learners{font-size:12px;color:rgba(255,255,255,0.45);}
+    .cc-cta{margin-top:14px;width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,#FFB800,#E8500A);color:#1a130d;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;transition:filter 200ms;}
+    .cc-cta:hover{filter:brightness(1.08);}
+
+    /* 顶部会员状态条 */
+    .ac-memstrip{display:flex;align-items:center;justify-content:center;gap:8px;font-size:12.5px;color:rgba(255,255,255,0.55);margin-bottom:22px;}
+    .ac-memstrip b{color:#FFB800;}
+  </style>
+</head>
+<body class="academy-page">
+  <div class="page-bg" aria-hidden="true"><img src="../assets/hero-hand.png" alt="" /></div>
+
+  <header class="ac-header">
+    <a class="ac-brand" href="../index.html">
+      <span class="fn-mark">开</span>
+      <span class="fn-name">开物</span>
+      <span class="fn-back">← 回首页</span>
+    </a>
+    <div class="ac-nav-actions">
+      <a class="btn-glow ghost sm" href="membership.html">会员权益</a>
+      <a class="btn-glow primary sm" href="question.html?dir=ecom">+ 造一份新工单</a>
+    </div>
+  </header>
+
+  <main class="ac-main">
+    <section class="ac-hero">
+      <div class="ac-eyebrow"><span class="dot-pulse"></span> ACADEMY · 造物学院</div>
+      <h1 class="ac-title">开物·<em>造物学院</em></h1>
+      <p class="ac-sub">系统学会用 AI 做内容 · 从 0 到接单</p>
+    </section>
+
+    <div class="ac-memstrip" id="acMemStrip"></div>
+
+    <div class="ac-tabs" id="acTabs"></div>
+
+    <div class="ac-grid" id="acGrid"></div>
+  </main>
+
+  <script src="../js/data-layer.js"></script>
+  <script src="../js/common.js"></script>
+  <script>
+    (function () {
+      // ===== 分类 =====
+      var CATS = [
+        { key: 'all',      label: '全部',        icon: '✦' },
+        { key: 'intro',    label: '入门课',      icon: '🌱' },
+        { key: 'ecom',     label: '电商带货',    icon: '🛒' },
+        { key: 'drama',    label: '短剧条漫',    icon: '🎬' },
+        { key: 'prompt',   label: '提示词进阶',  icon: '✨' },
+        { key: 'director', label: 'AI导演思维',  icon: '🎯' }
+      ];
+
+      // ===== 课程数据（共享自 common.js · KW.ACADEMY_COURSES）=====
+      var COURSES = (window.KW && KW.ACADEMY_COURSES) || [];
+
+      // ===== 工具 =====
+      function fmtNum(n) {
+        if (n >= 10000) return (n / 10000).toFixed(1).replace(/\.0$/, '') + ' 万';
+        if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+        return String(n);
+      }
+      function esc(s) {
+        return String(s).replace(/[&<>"]/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+        });
+      }
+      // 当前用户会员档位
+      function curTier() {
+        return (window.KW_DL && KW_DL.getMembership) ? KW_DL.getMembership().key : 'free';
+      }
+      // 会员打通（共享自 common.js · KW.academyAccessBadge）：返回 { free, big, note }
+      var accessBadge = KW.academyAccessBadge;
+
+      var grid = document.getElementById('acGrid');
+      var tabsEl = document.getElementById('acTabs');
+      var memStrip = document.getElementById('acMemStrip');
+      var current = 'all';
+
+      // 会员状态条
+      function renderMemStrip() {
+        var mem = (window.KW_DL && KW_DL.getMembership) ? KW_DL.getMembership() : { name: '免费版', icon: '🌱' };
+        memStrip.innerHTML = '当前身份：<b>' + (mem.icon || '') + ' ' + esc(mem.name) + '</b> · 入门课会员免费 · 专项课专业版免费';
+      }
+
+      // Tab
+      function renderTabs() {
+        tabsEl.innerHTML = CATS.map(function (c) {
+          return '<button class="ac-tab' + (c.key === current ? ' active' : '') + '" data-key="' + c.key + '">' + c.icon + ' ' + c.label + '</button>';
+        }).join('');
+      }
+
+      // 卡片网格
+      function renderGrid() {
+        var tier = curTier();
+        var list = current === 'all' ? COURSES : COURSES.filter(function (c) { return c.cat === current; });
+        var catLabel = {};
+        CATS.forEach(function (c) { catLabel[c.key] = c.label; });
+
+        grid.innerHTML = list.map(function (c) {
+          var b = accessBadge(c, tier);
+          return '<article class="course-card" data-id="' + c.id + '">' +
+            '<div class="cc-cover" style="background:linear-gradient(135deg,rgba(255,184,0,0.16),rgba(232,80,10,0.10));">' +
+              '<span class="cc-cat-tag">' + esc(catLabel[c.cat] || '') + '</span>' +
+              '<span class="cc-access ' + (b.free ? 'free' : 'paid') + '">' + (b.free ? '✓ ' + b.big : b.big) + '</span>' +
+              c.cover +
+            '</div>' +
+            '<div class="cc-body">' +
+              '<h3 class="cc-name">' + esc(c.name) + '</h3>' +
+              '<div class="cc-meta">' +
+                '<span>👨‍🏫 ' + esc(c.teacher) + '</span><span class="dot">·</span>' +
+                '<span>' + c.lessons + ' 节</span>' +
+              '</div>' +
+              '<div class="cc-foot">' +
+                '<div class="cc-price">' +
+                  '<span class="big' + (b.free ? ' free-txt' : '') + '">' + b.big + '</span>' +
+                  '<span class="note">' + esc(b.note) + '</span>' +
+                '</div>' +
+                '<span class="cc-learners">👥 ' + fmtNum(c.learners) + ' 在学</span>' +
+              '</div>' +
+              '<button class="cc-cta">' + (b.free ? '开始学习' : '了解课程') + '</button>' +
+            '</div>' +
+          '</article>';
+        }).join('');
+      }
+
+      // 事件
+      tabsEl.addEventListener('click', function (e) {
+        var btn = e.target.closest('.ac-tab');
+        if (!btn) return;
+        current = btn.dataset.key;
+        renderTabs();
+        renderGrid();
+      });
+      grid.addEventListener('click', function (e) {
+        var card = e.target.closest('.course-card');
+        if (!card) return;
+        var id = card.dataset.id;
+        if (window.KW_DL) KW_DL.logEvent('academy.course.click', { id: id });
+        var course = COURSES.find(function (c) { return c.id === id; });
+        var b = accessBadge(course, curTier());
+        KW.toast(b.free ? '即将开课 · 敬请期待 📚' : '完整课程即将上线，可先了解会员权益', b.free ? 'success' : '');
+      });
+
+      // init
+      if (window.KW_DL) KW_DL.logEvent('academy.viewed', {});
+      renderMemStrip();
+      renderTabs();
+      renderGrid();
+    })();
+  </script>
+  <script src="../js/widget.js"></script>
+</body>
+</html>

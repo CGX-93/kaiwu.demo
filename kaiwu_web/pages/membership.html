@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>开物 · 会员</title>
+  <link rel="stylesheet" href="../css/common.css" />
+  <style>
+    body.mb-page { background:#050505; color:#fff; min-height:100vh; overflow-x:hidden; }
+    .page-bg { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+    .page-bg img { width:130%; height:130%; position:absolute; top:-15%; left:-15%; object-fit:cover; object-position:center 30%; filter:blur(120px) brightness(0.45); opacity:0.28; }
+    .page-bg::after { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 80% 70% at 50% 30%, transparent 0%, rgba(5,5,5,0.7) 70%, rgba(5,5,5,0.95) 100%); }
+
+    .mb-header { position:sticky; top:0; z-index:50; background:rgba(5,5,5,0.76); backdrop-filter:blur(22px) saturate(160%); -webkit-backdrop-filter:blur(22px) saturate(160%); border-bottom:1px solid rgba(255,255,255,0.07); padding:14px 36px; display:flex; align-items:center; justify-content:space-between; }
+    .mb-brand { display:flex; align-items:center; gap:12px; text-decoration:none; }
+    .mb-brand .fn-mark { width:34px; height:34px; display:grid; place-items:center; background:linear-gradient(135deg,#FFB800,#E8500A); color:#fff; border-radius:10px; font-weight:800; font-size:15px; box-shadow:0 8px 20px rgba(232,80,10,0.45); }
+    .mb-brand .fn-name { font-size:16px; font-weight:700; letter-spacing:1.4px; color:#fff; }
+    .mb-brand .fn-back { font-size:12px; color:rgba(255,255,255,0.4); margin-left:4px; }
+    .btn-glow { position:relative; display:inline-flex; align-items:center; gap:8px; padding:12px 22px; border-radius:999px; border:none; font-size:13.5px; font-weight:500; font-family:inherit; cursor:pointer; text-decoration:none; color:inherit; transition:all 280ms; white-space:nowrap; }
+    .btn-glow.ghost { background:rgba(255,255,255,0.04); color:rgba(255,255,255,0.9); border:1px solid rgba(255,255,255,0.16); }
+    .btn-glow.ghost:hover { background:rgba(255,255,255,0.08); }
+    .btn-glow.sm { padding:8px 14px; font-size:12.5px; }
+
+    .mb-main { position:relative; z-index:2; max-width:1180px; margin:0 auto; padding:56px 36px 80px; }
+    .mb-hero { text-align:center; margin-bottom:30px; }
+    .mb-eyebrow { display:inline-block; padding:6px 16px; border-radius:999px; background:rgba(255,215,120,0.14); color:#FFE08A; font-size:12px; letter-spacing:3px; border:1px solid rgba(255,215,120,0.4); margin-bottom:18px; }
+    .mb-title { font-size:clamp(32px,4.6vw,50px); font-weight:800; margin:0 0 12px; letter-spacing:-0.5px; }
+    .mb-title em { font-style:normal; background:linear-gradient(135deg,#FFE08A,#FFB800 40%,#E8500A); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .mb-lead { font-size:15.5px; color:rgba(255,255,255,0.68); line-height:1.8; max-width:640px; margin:0 auto; }
+
+    /* 月年切换 */
+    .billing-toggle { display:inline-flex; align-items:center; gap:4px; margin:24px auto 0; padding:5px; border-radius:999px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); }
+    .billing-toggle button { padding:8px 22px; border-radius:999px; border:none; background:transparent; color:rgba(255,255,255,0.6); font-family:inherit; font-size:13.5px; cursor:pointer; transition:all 240ms; position:relative; }
+    .billing-toggle button.active { background:linear-gradient(135deg,#FFB800,#E8500A); color:#fff; box-shadow:0 8px 20px rgba(232,80,10,0.45); }
+    .billing-toggle .save-tag { position:absolute; top:-9px; right:-6px; font-size:9.5px; padding:2px 7px; border-radius:999px; background:#5BE3C0; color:#04211B; font-weight:700; }
+
+    /* 4 档卡片 — 3D 悬浮 */
+    .plans { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin:40px 0 48px; perspective:1600px; }
+    .plan { position:relative; padding:28px 22px; border-radius:20px; display:flex; flex-direction:column; transition:all 400ms cubic-bezier(.2,.7,.3,1);
+      background:linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 45%, rgba(0,0,0,0.2) 100%), rgba(18,18,22,0.7);
+      backdrop-filter:blur(20px) saturate(150%); -webkit-backdrop-filter:blur(20px) saturate(150%);
+      border:0.5px solid var(--pc-border); box-shadow:0 30px 60px -24px rgba(0,0,0,0.7), 0 0 40px -16px var(--pc-glow), inset 0 1px 0 rgba(255,255,255,0.18); }
+    .plan:hover { transform:translateY(-6px) rotateX(4deg); }
+    .plan.free    { --pc:#5BE3C0; --pc2:#00D4AA; --pc-border:rgba(0,212,170,0.4);  --pc-glow:rgba(0,212,170,0.4); }
+    .plan.creator { --pc:#FFB800; --pc2:#E8500A; --pc-border:rgba(232,80,10,0.55); --pc-glow:rgba(232,80,10,0.5); }
+    .plan.pro     { --pc:#9B92F0; --pc2:#534AB7; --pc-border:rgba(127,119,221,0.5); --pc-glow:rgba(127,119,221,0.45); }
+    .plan.ent     { --pc:#5BA8E8; --pc2:#185FA5; --pc-border:rgba(55,138,221,0.5);  --pc-glow:rgba(55,138,221,0.45); }
+    .plan.creator { transform:translateY(-8px); }
+    .plan.creator::before { content:'推荐'; position:absolute; top:-11px; left:50%; transform:translateX(-50%); padding:4px 16px; border-radius:999px; background:linear-gradient(135deg,#FFB800,#E8500A); color:#fff; font-size:11px; font-weight:700; box-shadow:0 8px 20px rgba(232,80,10,0.5); }
+    .plan-icon { width:46px; height:46px; border-radius:13px; background:linear-gradient(135deg,var(--pc),var(--pc2)); display:grid; place-items:center; font-size:23px; margin-bottom:14px; box-shadow:0 10px 24px -6px var(--pc-glow); }
+    .plan-name { font-size:19px; font-weight:800; color:#fff; margin:0 0 3px; }
+    .plan-tagline { font-size:11.5px; color:rgba(255,255,255,0.5); margin:0 0 16px; min-height:30px; }
+    .plan-price { margin-bottom:16px; min-height:54px; }
+    .plan-price .pm { font-size:30px; font-weight:800; color:#fff; }
+    .plan-price .pm em { font-style:normal; font-size:13px; color:rgba(255,255,255,0.5); font-weight:400; }
+    .plan-price .py { font-size:11.5px; color:var(--pc); margin-top:4px; min-height:16px; }
+    .plan-feats { list-style:none; margin:0 0 18px; padding:0; flex:1; }
+    .plan-feats li { font-size:12px; color:rgba(255,255,255,0.78); line-height:1.45; padding:6px 0 6px 20px; position:relative; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .plan-feats li::before { content:'✓'; position:absolute; left:0; top:6px; color:var(--pc); font-weight:800; font-size:11px; }
+    .plan-cta { padding:12px; border-radius:999px; border:none; font-family:inherit; font-size:13.5px; font-weight:700; cursor:pointer; text-align:center; transition:all 240ms; text-decoration:none; display:block; color:#fff; background:linear-gradient(135deg,var(--pc),var(--pc2)); box-shadow:0 12px 28px -8px var(--pc-glow); }
+    .plan-cta:hover { transform:translateY(-2px); }
+    .plan.free .plan-cta { background:rgba(0,212,170,0.16); color:#5BE3C0; border:1px solid rgba(0,212,170,0.42); box-shadow:none; cursor:default; }
+
+    /* 企业版联系表单 */
+    .ent-contact { margin-top:8px; padding:24px 28px; border-radius:18px; background:radial-gradient(120% 100% at 0% 0%, rgba(55,138,221,0.10), transparent 55%), rgba(255,255,255,0.03); border:1px dashed rgba(55,138,221,0.4); }
+    .ent-contact h3 { font-size:18px; margin:0 0 6px; color:#fff; }
+    .ent-contact p { font-size:13px; color:rgba(255,255,255,0.6); margin:0 0 16px; }
+    .ent-form { display:flex; gap:10px; flex-wrap:wrap; }
+    .ent-form input { flex:1; min-width:180px; padding:11px 16px; border-radius:999px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); color:#fff; font-family:inherit; font-size:13.5px; }
+    .ent-form input:focus { outline:none; border-color:rgba(55,138,221,0.6); }
+    .ent-form button { padding:11px 26px; border-radius:999px; border:none; background:linear-gradient(135deg,#5BA8E8,#185FA5); color:#fff; font-family:inherit; font-size:13.5px; font-weight:600; cursor:pointer; }
+
+    .imm-footer-mini { margin-top:50px; padding:24px 0; text-align:center; font-size:11.5px; color:rgba(255,255,255,0.32); border-top:1px solid rgba(255,255,255,0.06); }
+    .imm-footer-mini a { color:rgba(255,184,0,0.85); text-decoration:none; }
+
+    @media (max-width:1000px){ .plans{ grid-template-columns:repeat(2,1fr); } .plan.creator{ transform:none; } }
+    @media (max-width:560px){ .plans{ grid-template-columns:1fr; } .ent-form{ flex-direction:column; } }
+  </style>
+</head>
+<body class="mb-page">
+  <div class="page-bg" aria-hidden="true"><img src="../assets/hero-hand.png" alt="" /></div>
+
+  <header class="mb-header">
+    <a class="mb-brand" href="../index.html"><span class="fn-mark">开</span><span class="fn-name">开物</span><span class="fn-back">← 回首页</span></a>
+    <a class="btn-glow ghost sm" href="profile.html">我的造物档案</a>
+  </header>
+
+  <main class="mb-main">
+    <section class="mb-hero">
+      <span class="mb-eyebrow">MEMBERSHIP · 会员</span>
+      <h1 class="mb-title">解锁你的<em>全部造物能力</em></h1>
+      <p class="mb-lead">免费版够你跑通完整电商流程 · 升级解锁全部方向、大师版工单、爆款解析与造物学院</p>
+      <div class="billing-toggle" id="billingToggle">
+        <button data-cycle="month" class="active">月付</button>
+        <button data-cycle="year">年付<span class="save-tag">省2月</span></button>
+      </div>
+    </section>
+
+    <!-- 4 档 -->
+    <section class="plans" id="plans">
+      <!-- 免费版 -->
+      <div class="plan free">
+        <div class="plan-icon">🌱</div>
+        <h3 class="plan-name">免费版</h3>
+        <p class="plan-tagline">零门槛 · 跑通完整流程</p>
+        <div class="plan-price"><div class="pm">¥0</div><div class="py">永久免费</div></div>
+        <ul class="plan-feats">
+          <li>基础版工单 不限次</li>
+          <li>标准版工单 3 次 / 月</li>
+          <li>失败修复库 查看</li>
+          <li>历史工单 10 条</li>
+        </ul>
+        <span class="plan-cta">当前方案</span>
+      </div>
+      <!-- 创作版 -->
+      <div class="plan creator">
+        <div class="plan-icon">🟠</div>
+        <h3 class="plan-name">创作版</h3>
+        <p class="plan-tagline">认真做内容的人</p>
+        <div class="plan-price"><div class="pm" data-m="¥29/月" data-y="¥299/年">¥29<em>/月</em></div><div class="py" data-save="立省 ¥49"></div></div>
+        <ul class="plan-feats">
+          <li>大师版工单 不限</li>
+          <li>月算力补贴 ¥30</li>
+          <li>造物学院 全部入门课</li>
+          <li>爆款解析 5 次 / 月</li>
+          <li>历史工单 100 条</li>
+        </ul>
+        <button class="plan-cta" data-sub="creator">立即订阅</button>
+      </div>
+      <!-- 专业版 -->
+      <div class="plan pro">
+        <div class="plan-icon">🟣</div>
+        <h3 class="plan-name">专业版</h3>
+        <p class="plan-tagline">把内容当事业</p>
+        <div class="plan-price"><div class="pm" data-m="¥49/月" data-y="¥499/年">¥49<em>/月</em></div><div class="py" data-save="立省 ¥89"></div></div>
+        <ul class="plan-feats">
+          <li>创作版全部权益</li>
+          <li>爆款解析 不限</li>
+          <li>月算力补贴 ¥100</li>
+          <li>造物学院 全部专项课</li>
+          <li>作品集置顶 + 签约优先</li>
+        </ul>
+        <button class="plan-cta" data-sub="pro">立即订阅</button>
+      </div>
+      <!-- 企业版 -->
+      <div class="plan ent">
+        <div class="plan-icon">🔵</div>
+        <h3 class="plan-name">企业版</h3>
+        <p class="plan-tagline">团队 / 机构 / MCN</p>
+        <div class="plan-price"><div class="pm" style="font-size:22px;">联系我们</div><div class="py">定制方案</div></div>
+        <ul class="plan-feats">
+          <li>多人协作席位</li>
+          <li>团队共享原子库</li>
+          <li>专属定制工单模板</li>
+          <li>批量生成 + 私有化部署</li>
+          <li>专属客服经理</li>
+        </ul>
+        <button class="plan-cta" data-sub="enterprise">联系我们</button>
+      </div>
+    </section>
+
+    <!-- 企业版联系表单 -->
+    <section class="ent-contact" id="entContact">
+      <h3>🔵 企业版 · 定制咨询</h3>
+      <p>留下企业信息，我们的解决方案顾问会在 1 个工作日内联系你</p>
+      <form class="ent-form" id="entForm">
+        <input type="text" id="entCompany" placeholder="企业 / 团队名称" />
+        <input type="text" id="entContactInfo" placeholder="联系人 + 电话 / 邮箱" />
+        <button type="submit">提交咨询</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="imm-footer-mini">开物会记录你的使用数据用于改进方法论模型 · <a href="data-policy.html">数据透明性说明</a></footer>
+
+  <script src="../js/data-layer.js"></script>
+  <script src="../js/common.js"></script>
+  <script>
+    // 月/年切换
+    let cycle = 'month';
+    document.querySelectorAll('#billingToggle button').forEach(b => {
+      b.addEventListener('click', () => {
+        cycle = b.dataset.cycle;
+        document.querySelectorAll('#billingToggle button').forEach(x => x.classList.toggle('active', x === b));
+        document.querySelectorAll('.plan-price .pm[data-m]').forEach(pm => {
+          pm.innerHTML = cycle === 'year'
+            ? pm.dataset.y.replace(/\/年/, '<em>/年</em>')
+            : pm.dataset.m.replace(/\/月/, '<em>/月</em>');
+        });
+        document.querySelectorAll('.plan-price .py[data-save]').forEach(py => {
+          py.textContent = cycle === 'year' ? py.dataset.save : '';
+        });
+        if (window.KW_DL) KW_DL.logEvent('membership.cycle', { cycle });
+      });
+    });
+
+    // 订阅按钮
+    document.querySelectorAll('[data-sub]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tier = btn.dataset.sub;
+        if (window.KW_DL) KW_DL.logEvent('membership.subscribe.click', { tier, cycle });
+        if (tier === 'enterprise') {
+          document.getElementById('entContact').scrollIntoView({ behavior:'smooth' });
+          document.getElementById('entCompany').focus();
+          return;
+        }
+        KW.toast('支付系统开发中，预计 Q2 开放 · 企业版可直接联系我们');
+      });
+    });
+
+    // 企业咨询
+    document.getElementById('entForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const company = document.getElementById('entCompany').value.trim();
+      const contact = document.getElementById('entContactInfo').value.trim();
+      if (!company || !contact) { KW.toast('填一下企业名称和联系方式'); return; }
+      if (window.KW_DL) {
+        KW_DL.addContribution({ type:'enterprise-lead', title:'企业版咨询', content:'企业：'+company+'\n联系：'+contact, sourceType:'original' });
+        KW_DL.logEvent('membership.enterprise.lead', {});
+      }
+      document.getElementById('entCompany').value = '';
+      document.getElementById('entContactInfo').value = '';
+      KW.toast('✓ 已收到 · 顾问会尽快联系你', 'success');
+    });
+  </script>
+  <script src="../js/widget.js"></script>
+</body>
+</html>

@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>开物 · decode 爆款解构车间</title>
+  <link rel="stylesheet" href="../css/common.css" />
+  <style>
+    body.decode-page{background:#050505;color:#fff;min-height:100vh;overflow-x:hidden;}
+    .page-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+    .page-bg img{width:130%;height:130%;position:absolute;top:-15%;left:-15%;object-fit:cover;object-position:center 40%;filter:blur(120px) brightness(0.45);opacity:0.3;}
+    .page-bg::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 36%,rgba(255,184,0,0.06) 0%,rgba(5,5,5,0.7) 60%,rgba(5,5,5,0.96) 100%);}
+
+    /* 顶部 */
+    .dc-header{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;padding:18px 26px;max-width:980px;margin:0 auto;}
+    .dc-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;}
+    .dc-brand .fn-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#FFB800,#E8500A);display:grid;place-items:center;font-weight:800;color:#fff;font-size:18px;}
+    .dc-brand .fn-name{font-size:17px;font-weight:800;}
+    .dc-brand .fn-back{font-size:12.5px;color:rgba(255,255,255,0.45);margin-left:6px;}
+    .dc-nav-actions{display:flex;gap:10px;}
+
+    .dc-main{position:relative;z-index:2;max-width:760px;margin:0 auto;padding:8px 26px 90px;}
+
+    /* hero */
+    .dc-hero{text-align:center;padding:26px 0 22px;}
+    .dc-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:2px;color:rgba(255,184,0,0.85);margin-bottom:12px;}
+    .dc-eyebrow .dot-pulse{width:7px;height:7px;border-radius:50%;background:#FFB800;animation:dcPulse 2s infinite;}
+    @keyframes dcPulse{0%{box-shadow:0 0 0 0 rgba(255,184,0,0.5)}70%{box-shadow:0 0 0 9px rgba(255,184,0,0)}100%{box-shadow:0 0 0 0 rgba(255,184,0,0)}}
+    .dc-title{font-size:30px;font-weight:800;margin:0 0 9px;}
+    .dc-title em{font-style:normal;background:linear-gradient(135deg,#FFB800,#E8500A);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+    .dc-sub{font-size:14px;color:rgba(255,255,255,0.6);margin:0;line-height:1.6;}
+
+    /* 输入卡 */
+    .dc-card{padding:26px 26px 24px;border-radius:22px;background:rgba(255,255,255,0.04);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);border:1px solid rgba(255,255,255,0.1);box-shadow:0 30px 70px -24px rgba(0,0,0,0.7);}
+    .dc-field{margin-bottom:18px;}
+    .dc-label{font-size:12.5px;color:rgba(255,255,255,0.6);font-weight:600;margin:0 0 8px;display:flex;align-items:center;gap:6px;}
+    .dc-label .req{color:#FFB800;}
+    .dc-label .opt{color:rgba(255,255,255,0.32);font-weight:400;}
+    .dc-row{display:flex;gap:12px;}
+    .dc-row .dc-field{flex:1;margin-bottom:0;}
+    .dc-input,.dc-select,.dc-textarea{width:100%;box-sizing:border-box;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:#fff;font-family:inherit;font-size:14px;transition:border-color 200ms;}
+    .dc-textarea{resize:vertical;min-height:104px;line-height:1.6;}
+    .dc-input:focus,.dc-select:focus,.dc-textarea:focus{outline:none;border-color:rgba(255,184,0,0.55);background:rgba(255,255,255,0.07);}
+    .dc-input::placeholder,.dc-textarea::placeholder{color:rgba(255,255,255,0.3);}
+    .dc-select option{background:#1a140d;}
+
+    /* 画面描述折叠 */
+    .dc-collapse-toggle{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-size:12.5px;color:rgba(255,184,0,0.8);user-select:none;}
+    .dc-collapse-toggle .chev{transition:transform 220ms;}
+    .dc-collapse-toggle.open .chev{transform:rotate(90deg);}
+    #dcVisualWrap{max-height:0;overflow:hidden;transition:max-height 300ms ease,margin 300ms ease;}
+    #dcVisualWrap.open{max-height:180px;margin-top:10px;}
+
+    /* 重点方向 chips */
+    .dc-chips{display:flex;flex-wrap:wrap;gap:8px;}
+    .dc-chip{padding:7px 15px;border-radius:999px;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.7);font-family:inherit;font-size:13px;cursor:pointer;transition:all 200ms;}
+    .dc-chip:hover{border-color:rgba(255,184,0,0.45);color:#fff;}
+    .dc-chip.active{background:linear-gradient(135deg,#FFB800,#E8500A);border-color:transparent;color:#1a130d;font-weight:700;}
+
+    .dc-run{margin-top:22px;width:100%;padding:15px;border-radius:14px;border:none;background:linear-gradient(135deg,#FFB800,#E8500A);color:#1a130d;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 14px 32px rgba(232,80,10,0.4);transition:transform 200ms,filter 200ms;}
+    .dc-run:hover{transform:translateY(-2px);}
+    .dc-run:disabled{opacity:.6;cursor:default;transform:none;}
+
+    .dc-compliance{margin-top:18px;text-align:center;font-size:11.5px;color:rgba(255,255,255,0.35);line-height:1.7;}
+
+    /* 结果区（P2 填充） */
+    .dc-results{margin-top:26px;}
+
+    /* 专业版门禁 */
+    .dc-gate{position:relative;z-index:2;max-width:520px;margin:6vh auto 0;text-align:center;padding:44px 36px;border-radius:24px;background:rgba(255,255,255,0.04);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);border:1px solid rgba(255,184,0,0.22);box-shadow:0 30px 70px -24px rgba(0,0,0,0.7);}
+    .dc-gate .g-lock{font-size:48px;margin-bottom:16px;}
+    .dc-gate .g-title{font-size:22px;font-weight:800;margin:0 0 10px;}
+    .dc-gate .g-title em{font-style:normal;color:#FFB800;}
+    .dc-gate .g-desc{font-size:13.5px;color:rgba(255,255,255,0.6);line-height:1.8;margin:0 0 26px;}
+    .dc-gate .g-cta{border:none;cursor:pointer;font-family:inherit;font-size:15px;font-weight:800;color:#1a130d;background:linear-gradient(135deg,#FFB800,#E8500A);padding:14px 30px;border-radius:999px;box-shadow:0 14px 32px rgba(232,80,10,0.4);transition:transform 200ms;}
+    .dc-gate .g-cta:hover{transform:translateY(-2px);}
+    .dc-gate .g-back{display:block;margin-top:18px;font-size:12.5px;color:rgba(255,255,255,0.4);text-decoration:none;}
+    .dc-gate .g-back:hover{color:rgba(255,255,255,0.7);}
+
+    /* === 草稿卡片（P2） === */
+    .dc-results-head{display:flex;align-items:center;justify-content:space-between;margin:6px 2px 14px;}
+    .dc-results-title{font-size:15px;font-weight:700;color:#fff;}
+    .dc-results-title span{color:rgba(255,255,255,0.45);font-weight:400;font-size:13px;margin-left:6px;}
+    .dc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
+    .draft-card{position:relative;border-radius:16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);padding:16px 16px 14px;}
+    .draft-card.green{border-color:rgba(0,212,170,0.32);}
+    .draft-card.yellow{border-color:rgba(255,184,0,0.3);}
+    .dcard-check{position:absolute;top:15px;right:15px;width:20px;height:20px;cursor:pointer;accent-color:#FFB800;}
+    .dcard-triage{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;margin-bottom:10px;}
+    .dcard-triage.green{color:#3DE6C0;background:rgba(0,212,170,0.14);border:1px solid rgba(0,212,170,0.4);}
+    .dcard-triage.yellow{color:#FFCB4D;background:rgba(255,184,0,0.12);border:1px solid rgba(255,184,0,0.38);}
+    .dcard-title{font-size:15.5px;font-weight:700;color:#fff;margin:0 36px 8px 0;line-height:1.4;}
+    .dcard-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+    .dcard-type{font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;color:var(--tc,#9AA0B0);background:color-mix(in srgb,var(--tc,#9AA0B0) 14%,transparent);border:1px solid color-mix(in srgb,var(--tc,#9AA0B0) 40%,transparent);}
+    .dcard-conf{font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;}
+    .dcard-risk{font-size:11px;color:#FF8A8A;display:inline-flex;align-items:center;gap:5px;}
+    .dcard-risk .dot{width:7px;height:7px;border-radius:50%;background:#FF5C5C;display:inline-block;box-shadow:0 0 6px rgba(255,92,92,0.7);}
+    .dcard-summary{font-size:13px;color:rgba(255,255,255,0.66);line-height:1.6;margin-bottom:10px;}
+    .dcard-template{font-size:12.5px;line-height:1.6;color:#FFE6B0;background:rgba(255,184,0,0.06);border:1px solid rgba(255,184,0,0.18);border-radius:10px;padding:10px 12px;white-space:pre-wrap;}
+    .dcard-expand{margin-top:10px;font-size:12px;color:rgba(255,184,0,0.8);cursor:pointer;user-select:none;display:inline-flex;align-items:center;gap:6px;}
+    .dcard-expand .chev{transition:transform 200ms;}
+    .dcard-expand.open .chev{transform:rotate(90deg);}
+    .dcard-foot{display:flex;align-items:center;justify-content:space-between;margin-top:10px;}
+    .dcard-foot .dcard-expand{margin-top:0;}
+    .dcard-edit{font-size:12px;color:rgba(255,255,255,0.5);cursor:pointer;user-select:none;}
+    .dcard-edit:hover{color:#FFB800;}
+    .dcard-detail{max-height:0;overflow:hidden;transition:max-height 320ms ease;}
+    .dcard-detail.open{max-height:640px;}
+    .dcard-detail-inner{padding-top:4px;}
+    .dd-h{font-size:11px;letter-spacing:.5px;color:rgba(255,255,255,0.45);text-transform:uppercase;margin:12px 0 5px;}
+    .dd-var{font-size:12.5px;color:rgba(255,255,255,0.72);line-height:1.7;}
+    .dd-var b{color:#fff;}
+    .dd-evidence{font-size:12.5px;color:rgba(255,255,255,0.66);line-height:1.6;border-left:2px solid rgba(255,184,0,0.45);padding-left:10px;font-style:italic;}
+    .dd-fp{margin:0;padding-left:16px;}
+    .dd-fp li{font-size:12.5px;color:#FFC0A8;line-height:1.55;}
+
+    /* === 批量操作栏（P3） === */
+    .dc-success-bar{margin:0 2px 14px;padding:13px 16px;border-radius:12px;background:rgba(0,212,170,0.1);border:1px solid rgba(0,212,170,0.34);font-size:13.5px;color:#CFF5EA;}
+    .dc-success-bar b{color:#fff;}
+    .dc-success-bar a{color:#3DE6C0;font-weight:700;text-decoration:none;margin-left:8px;}
+    .dc-success-bar a:hover{text-decoration:underline;}
+    .dc-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 2px 14px;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);}
+    .dc-tb{border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.78);font-family:inherit;font-size:12.5px;padding:8px 14px;border-radius:10px;cursor:pointer;transition:all 180ms;}
+    .dc-tb:hover{border-color:rgba(255,184,0,0.45);color:#fff;}
+    .dc-tb.active{background:rgba(255,184,0,0.14);border-color:rgba(255,184,0,0.45);color:#FFCB4D;}
+    .dc-tb.primary{background:linear-gradient(135deg,#FFB800,#E8500A);border-color:transparent;color:#1a130d;font-weight:800;}
+    .dc-tb.primary:disabled{opacity:.6;cursor:default;}
+    .dc-tb.danger{color:#FF8A8A;border-color:rgba(255,92,92,0.32);}
+    .dc-tb.danger:hover{background:rgba(255,92,92,0.12);}
+
+    /* === 单卡编辑（P3） === */
+    .dc-edit .de-h{font-size:14px;font-weight:700;color:#fff;margin-bottom:12px;}
+    .de-l{display:block;font-size:11.5px;color:rgba(255,255,255,0.5);margin:10px 0 5px;}
+    .de-in{width:100%;box-sizing:border-box;padding:9px 11px;border-radius:9px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.14);color:#fff;font-family:inherit;font-size:13px;}
+    .de-in:focus{outline:none;border-color:rgba(255,184,0,0.55);}
+    .de-ta{resize:vertical;min-height:62px;line-height:1.5;}
+    select.de-in option{background:#1a140d;}
+    .de-actions{display:flex;align-items:center;gap:8px;margin-top:14px;}
+    .de-actions button{border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.05);color:#fff;font-family:inherit;font-size:12.5px;padding:8px 14px;border-radius:9px;cursor:pointer;}
+    .de-save{background:linear-gradient(135deg,#FFB800,#E8500A)!important;border-color:transparent!important;color:#1a130d!important;font-weight:700;}
+    .de-del{color:#FF8A8A!important;border-color:rgba(255,92,92,0.32)!important;}
+
+    /* === 去重提醒弹窗（P3） === */
+    .dc-dedup-overlay{position:fixed;inset:0;z-index:320;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;}
+    .dc-dedup-overlay.show{opacity:1;}
+    .dd-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(3px);}
+    .dd-box{position:relative;width:min(440px,calc(100vw - 36px));background:#0d0c0f;border:1px solid rgba(255,184,0,0.28);border-radius:18px;padding:24px;box-shadow:0 30px 70px -20px rgba(0,0,0,0.8);transform:scale(.96);transition:transform .2s;}
+    .dc-dedup-overlay.show .dd-box{transform:scale(1);}
+    .dd-title{font-size:17px;font-weight:800;color:#fff;margin-bottom:14px;}
+    .dd-body{margin-bottom:18px;}
+    .dd-row{display:flex;gap:10px;font-size:13px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.07);}
+    .dd-k{flex:0 0 70px;color:rgba(255,255,255,0.45);}
+    .dd-v{color:rgba(255,255,255,0.85);}
+    .dd-actions{display:flex;gap:10px;}
+    .dd-btn{flex:1;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.05);color:#fff;font-family:inherit;font-size:13px;font-weight:600;padding:11px;border-radius:10px;cursor:pointer;transition:all 180ms;}
+    .dd-btn:hover{border-color:rgba(255,184,0,0.45);}
+    .dd-btn.variant{background:linear-gradient(135deg,#FFB800,#E8500A);border-color:transparent;color:#1a130d;font-weight:800;}
+  </style>
+</head>
+<body class="decode-page">
+  <div class="page-bg" aria-hidden="true"><img src="../assets/hero-hand.png" alt="" /></div>
+
+  <header class="dc-header">
+    <a class="dc-brand" href="../index.html">
+      <span class="fn-mark">开</span>
+      <span class="fn-name">开物</span>
+      <span class="fn-back">← 回首页</span>
+    </a>
+    <div class="dc-nav-actions">
+      <a class="btn-glow ghost sm" href="atoms.html?type=motif">📚 原子库</a>
+      <a class="btn-glow ghost sm" href="membership.html">会员权益</a>
+    </div>
+  </header>
+
+  <!-- 专业版门禁（非 pro/signed 显示，不渲染主功能） -->
+  <div class="dc-gate" id="dcGate" style="display:none">
+    <div class="g-lock">🔒</div>
+    <h1 class="g-title">decode · <em>爆款解构车间</em></h1>
+    <p class="g-desc">把爆款拆成可复用的创作原子 · 只提炼方法论，不存原视频<br/>该功能为<strong style="color:#FFB800">专业版专属</strong>能力</p>
+    <button class="g-cta" id="dcGateCta">升级专业版解锁 →</button>
+    <a class="g-back" href="../index.html">← 返回首页</a>
+  </div>
+
+  <!-- 主功能（pro/signed 才渲染） -->
+  <main class="dc-main" id="dcMain" style="display:none">
+    <section class="dc-hero">
+      <div class="dc-eyebrow"><span class="dot-pulse"></span> DECODE · 爆款解构车间</div>
+      <h1 class="dc-title">把爆款拆成<em>可复用的创作原子</em></h1>
+      <p class="dc-sub">只提炼方法论，不存原视频 · 一条爆款炸成多个独立可复用的原子</p>
+    </section>
+
+    <div class="dc-card">
+      <div class="dc-row">
+        <div class="dc-field">
+          <p class="dc-label">来源链接 <span class="opt">选填</span></p>
+          <input type="url" class="dc-input" id="dcUrl" placeholder="粘贴爆款视频 / 笔记链接" />
+        </div>
+        <div class="dc-field" style="flex:0 0 150px">
+          <p class="dc-label">平台</p>
+          <select class="dc-select" id="dcPlatform">
+            <option value="抖音">抖音</option>
+            <option value="小红书">小红书</option>
+            <option value="视频号">视频号</option>
+            <option value="快手">快手</option>
+            <option value="B站">B站</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="dc-field">
+        <p class="dc-label">标题 / 文案 / 字幕 <span class="req">*</span></p>
+        <textarea class="dc-textarea" id="dcText" placeholder="把爆款的标题、文案、口播字幕粘进来——这是解构的主要依据"></textarea>
+      </div>
+
+      <div class="dc-field">
+        <span class="dc-collapse-toggle" id="dcVisualToggle"><span class="chev">▸</span> 画面描述（选填）</span>
+        <div id="dcVisualWrap">
+          <textarea class="dc-textarea" id="dcVisual" placeholder="可选：镜头怎么动 / 画面风格 / 视觉反差" style="margin-top:2px"></textarea>
+        </div>
+      </div>
+
+      <div class="dc-field">
+        <p class="dc-label">重点拆解方向 <span class="opt">选填 · 多选</span></p>
+        <div class="dc-chips" id="dcFocusChips">
+          <button type="button" class="dc-chip" data-focus="钩子">钩子</button>
+          <button type="button" class="dc-chip" data-focus="痛点">痛点</button>
+          <button type="button" class="dc-chip" data-focus="反差">反差</button>
+          <button type="button" class="dc-chip" data-focus="文案">文案</button>
+          <button type="button" class="dc-chip" data-focus="结构">结构</button>
+          <button type="button" class="dc-chip" data-focus="视觉">视觉</button>
+          <button type="button" class="dc-chip" data-focus="转化">转化</button>
+        </div>
+      </div>
+
+      <button class="dc-run" id="dcRun">⚡ 开始解构</button>
+    </div>
+
+    <p class="dc-compliance">本工具仅提炼公开内容的方法论结构与来源引用，不存储原视频。</p>
+
+    <section class="dc-results" id="dcResults"></section>
+  </main>
+
+  <script src="../js/data-layer.js"></script>
+  <script src="../js/common.js"></script>
+  <script>
+    (function () {
+      // ===== 专业版门禁 =====
+      const tier = (window.KW_DL && KW_DL.getMembership) ? KW_DL.getMembership().key : 'free';
+      const isPro = (tier === 'pro' || tier === 'signed');
+      const gate = document.getElementById('dcGate');
+      const main = document.getElementById('dcMain');
+
+      if (!isPro) {
+        gate.style.display = '';
+        if (window.KW_DL) KW_DL.logEvent('decode.gate.view', { tier: tier });
+        document.getElementById('dcGateCta').addEventListener('click', function () {
+          if (window.KW_DL) KW_DL.logEvent('decode.gate.cta', { tier: tier });
+          if (KW.showMemberModal) KW.showMemberModal('pro', 'decode 爆款解构车间');
+        });
+        return; // 不渲染主功能
+      }
+      main.style.display = '';
+      if (window.KW_DL) KW_DL.logEvent('decode.viewed', { tier: tier });
+
+      // ===== 输入交互 =====
+      // 画面描述折叠
+      const vToggle = document.getElementById('dcVisualToggle');
+      const vWrap = document.getElementById('dcVisualWrap');
+      vToggle.addEventListener('click', function () {
+        const open = vWrap.classList.toggle('open');
+        vToggle.classList.toggle('open', open);
+      });
+
+      // 重点方向 chips 多选
+      document.getElementById('dcFocusChips').addEventListener('click', function (e) {
+        const chip = e.target.closest('.dc-chip');
+        if (!chip) return;
+        chip.classList.toggle('active');
+      });
+
+      function getFocus() {
+        return Array.prototype.map.call(
+          document.querySelectorAll('#dcFocusChips .dc-chip.active'),
+          function (c) { return c.dataset.focus; }
+        );
+      }
+      function getInput() {
+        return {
+          url: document.getElementById('dcUrl').value.trim(),
+          platform: document.getElementById('dcPlatform').value,
+          text: document.getElementById('dcText').value.trim(),
+          visual_desc: document.getElementById('dcVisual').value.trim(),
+          focus: getFocus()
+        };
+      }
+
+      // ===== 工具 =====
+      function esc(s){
+        return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){
+          return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c];
+        });
+      }
+      // 原子类型配色（覆盖第一节枚举）
+      function typeColor(t){
+        const m = {
+          '钩子':'#FFD56A','痛点':'#FF7A8A','反差':'#C97AF2','卖点':'#00D4AA','情绪触发':'#FF9B6B',
+          '社会证明':'#7C9DFF','稀缺紧迫':'#FF6B9B','CTA行动号召':'#5BE3C0','文案模板':'#9AA0B0',
+          '结构公式':'#7E8CE0','分镜':'#C97AF2','运镜':'#B98BFF','视觉风格':'#FF6B9B',
+          '失败模式':'#FF5C5C','平台规则':'#5BA8FF'
+        };
+        return m[t] || '#9AA0B0';
+      }
+      function confColor(c){ c = Number(c) || 0; return c >= 0.8 ? '#3DE6C0' : (c >= 0.7 ? '#FFCB4D' : '#FF8A5C'); }
+      // 置信度分流：≥0.7 且无风险 → 绿牌（默认勾选）
+      function isGreen(a){ return (Number(a.confidence) >= 0.7) && (!a.riskFlags || a.riskFlags.length === 0); }
+
+      // ===== JSON 清洗层（Phase 5 接真模型直接复用）=====
+      // 真模型可能返回：解释文字 + ```json 围栏 + 数组。这里统一剥成可 parse 的数组。
+      function cleanAndParseJSON(raw){
+        if (raw == null) return { ok:false, error:'空响应' };
+        let s = String(raw).trim();
+        s = s.replace(/```json/gi, '').replace(/```/g, '');   // 1. 剥 markdown 围栏
+        const a = s.indexOf('['), b = s.lastIndexOf(']');      // 2. 截取 [ … ]
+        if (a >= 0 && b > a) s = s.slice(a, b + 1);
+        try {
+          const data = JSON.parse(s);                          // 3. parse + 兜底
+          return { ok:true, data: Array.isArray(data) ? data : [data] };
+        } catch (e) {
+          return { ok:false, error: e.message };
+        }
+      }
+
+      // ===== mock 解析（Phase 5 换成真模型 API；返回格式模拟真实模型：含解释文字 + 围栏）=====
+      function mockParse(input){
+        // 模拟一条「减肥科普带货」爆款炸成 4 个不同类型原子（钩子/痛点/反差/稀缺紧迫）
+        const atoms = [
+          {
+            title:'数字反差开场钩',
+            atomType:'钩子',
+            summary:'用一个极低的小投入对比一个夸张大结果，制造"这怎么可能"的反差缺口，逼用户停下来求证。',
+            template:'{小投入}就能{夸张结果}？我{亲测时长}试了下。',
+            variables:[{name:'小投入',example:'每天 10 块'},{name:'夸张结果',example:'一个月瘦 8 斤'},{name:'亲测时长',example:'30 天'}],
+            domains:['知识科普','电商带货','通用'],
+            tags:['短视频开头','数字反差','悬念'],
+            evidence:'每天10块钱，一个月真的瘦了8斤？',
+            failurePatterns:['反差太假显标题党','结果不可信用户秒划'],
+            repairSuggestions:['用真实可验证的数字','反差后立刻补一个可信证据'],
+            confidence:0.9,
+            riskFlags:[]
+          },
+          {
+            title:'共情式痛点归因',
+            atomType:'痛点',
+            summary:'先承认用户的努力，再把没效果归到一个被忽略的认知盲区，避免说教，让用户更愿意听下去。',
+            template:'不是你不够{用户已付出的努力}，是你忽略了{被忽略的关键}。',
+            variables:[{name:'用户已付出的努力',example:'自律'},{name:'被忽略的关键',example:'吃饭的顺序'}],
+            domains:['知识科普','电商带货'],
+            tags:['短视频开头','共鸣','归因'],
+            evidence:'不是你管不住嘴，是你吃饭的顺序错了',
+            failurePatterns:['关键变量太泛用户不信','否定得太重变成说教'],
+            repairSuggestions:['关键变量要具体可验证','承认努力的语气要真诚'],
+            confidence:0.86,
+            riskFlags:[]
+          },
+          {
+            title:'身份前后反差证明',
+            atomType:'反差',
+            summary:'用同一个人 before/after 的强烈对照制造可信度，让"改变可达成"被亲眼看见。',
+            template:'{过去糟糕状态}的我，到{现在理想状态}，只做对了{关键动作}。',
+            variables:[{name:'过去糟糕状态',example:'三年减肥失败'},{name:'现在理想状态',example:'半年没反弹'},{name:'关键动作',example:'一件事'}],
+            domains:['知识科普','电商带货','通用'],
+            tags:['before-after','身份反差','可信度'],
+            evidence:'三年减肥失败的我，靠这一个习惯半年没反弹',
+            failurePatterns:['对比太假像摆拍','关键动作藏着吊胃口掉粉'],
+            repairSuggestions:['用真实过程证据','关键动作要真给，别只吊胃口'],
+            confidence:0.7,
+            riskFlags:[]
+          },
+          {
+            title:'限时稀缺催单',
+            atomType:'稀缺紧迫',
+            summary:'用名额/时间稀缺制造紧迫感，推动用户当下决策，缩短犹豫期。',
+            template:'只有{稀缺数量}个名额，{截止时间}后恢复原价 {原价}。',
+            variables:[{name:'稀缺数量',example:'50'},{name:'截止时间',example:'今晚 12 点'},{name:'原价',example:'299'}],
+            domains:['电商带货'],
+            tags:['转化','催单','稀缺'],
+            evidence:'前50名半价，今晚12点涨回299',
+            failurePatterns:['虚假稀缺被识破失去信任','每条都喊，钝化效果'],
+            repairSuggestions:['稀缺要真实可兑现','别条条都喊，留给真正促销'],
+            confidence:0.58,
+            riskFlags:['夸大宣传']
+          }
+        ];
+        // 模拟真实模型输出：前面带解释文字 + markdown 围栏（用于检验清洗层）
+        return '好的，已按方法论原子拆解如下：\n```json\n' + JSON.stringify(atoms, null, 2) + '\n```';
+      }
+
+      // ===== 草稿卡片渲染 =====
+      let drafts = [];
+      let showOnly = 'all';   // 'all' | 'yellow'
+      let accepting = false;  // 一键收录防连击
+      let lastInput = null;   // 本次解构的输入（收录映射 source.url/platform 用）
+      const resultsEl = document.getElementById('dcResults');
+
+      // atomType → 所属库（去重比对 + P4 收录映射共用）
+      function atomTypeToLibrary(t){
+        const m = {
+          '钩子':'钩子开头',
+          '痛点':'卖点提炼','反差':'卖点提炼','卖点':'卖点提炼','情绪触发':'卖点提炼',
+          '社会证明':'卖点提炼','稀缺紧迫':'卖点提炼','CTA行动号召':'卖点提炼',
+          '文案模板':'卖点提炼','结构公式':'卖点提炼',
+          '分镜':'分镜节奏','运镜':'分镜节奏',
+          '视觉风格':'风格锁定','失败模式':'失败修复','平台规则':'平台调性'
+        };
+        return m[t] || '卖点提炼';
+      }
+
+      // 轻量字符串相似度（char-bigram Dice，不上向量）
+      function bigrams(s){
+        s = String(s || '').replace(/[\s\p{P}]/gu, '');
+        const b = [];
+        for (let i = 0; i < s.length - 1; i++) b.push(s.slice(i, i + 2));
+        return b;
+      }
+      function similar(a, b){
+        a = String(a || ''); b = String(b || '');
+        if (!a || !b) return false;
+        if (a === b) return true;
+        const A = bigrams(a), B = bigrams(b);
+        if (!A.length || !B.length) return false;
+        const cnt = {}; B.forEach(function(x){ cnt[x] = (cnt[x] || 0) + 1; });
+        let inter = 0; A.forEach(function(x){ if (cnt[x] > 0){ inter++; cnt[x]--; } });
+        return (2 * inter) / (A.length + B.length) >= 0.5;
+      }
+
+      // 单卡内联编辑（改 title/atomType/template/tags · 删卡）
+      const ATOM_TYPES = ['钩子','痛点','反差','卖点','情绪触发','社会证明','稀缺紧迫','CTA行动号召','文案模板','结构公式','分镜','运镜','视觉风格','失败模式','平台规则'];
+      function openEdit(i){
+        const d = drafts.find(function(x){ return x._i === i; });
+        const card = resultsEl.querySelector('.draft-card[data-i="' + i + '"]');
+        if (!d || !card) return;
+        card.innerHTML =
+          '<div class="dc-edit">' +
+            '<div class="de-h">编辑草稿</div>' +
+            '<label class="de-l">标题</label><input class="de-in" data-f="title" value="' + esc(d.title) + '" />' +
+            '<label class="de-l">类型</label><select class="de-in" data-f="atomType">' +
+              ATOM_TYPES.map(function(t){ return '<option' + (t === d.atomType ? ' selected' : '') + '>' + t + '</option>'; }).join('') +
+            '</select>' +
+            '<label class="de-l">模板</label><textarea class="de-in de-ta" data-f="template">' + esc(d.template || '') + '</textarea>' +
+            '<label class="de-l">标签（空格分隔，清空即删除）</label><input class="de-in" data-f="tags" value="' + esc((d.tags || []).join(' ')) + '" />' +
+            '<div class="de-actions">' +
+              '<button class="de-del">🗑 删除此卡</button>' +
+              '<span style="flex:1"></span>' +
+              '<button class="de-cancel">取消</button>' +
+              '<button class="de-save">保存</button>' +
+            '</div>' +
+          '</div>';
+        card.querySelector('.de-save').addEventListener('click', function(){
+          const v = function(f){ return card.querySelector('[data-f="' + f + '"]').value; };
+          d.title = v('title').trim() || d.title;
+          d.atomType = v('atomType');
+          d.template = v('template').trim();
+          d.tags = v('tags').trim().split(/\s+/).filter(Boolean);
+          renderDrafts();
+        });
+        card.querySelector('.de-cancel').addEventListener('click', renderDrafts);
+        card.querySelector('.de-del').addEventListener('click', function(){
+          drafts = drafts.filter(function(x){ return x._i !== i; });
+          renderDrafts();
+        });
+      }
+
+      // 去重提醒弹窗 → Promise<'keep'|'skip'|'variant'>
+      function confirmDedup(draft, existing){
+        return new Promise(function(resolve){
+          const dlg = document.createElement('div');
+          dlg.className = 'dc-dedup-overlay';
+          dlg.innerHTML =
+            '<div class="dd-backdrop"></div>' +
+            '<div class="dd-box">' +
+              '<div class="dd-title">⚠️ 疑似已有相似原子</div>' +
+              '<div class="dd-body">' +
+                '<div class="dd-row"><span class="dd-k">本次草稿</span><span class="dd-v">' + esc(draft.title) + ' · ' + esc(draft.atomType) + '</span></div>' +
+                '<div class="dd-row"><span class="dd-k">库中已有</span><span class="dd-v">' + esc(existing.title) + ' · ' + esc(existing.atomType) + '</span></div>' +
+              '</div>' +
+              '<div class="dd-actions">' +
+                '<button class="dd-btn" data-c="keep">仍收录</button>' +
+                '<button class="dd-btn" data-c="skip">跳过</button>' +
+                '<button class="dd-btn variant" data-c="variant">作为变体</button>' +
+              '</div>' +
+            '</div>';
+          document.body.appendChild(dlg);
+          requestAnimationFrame(function(){ dlg.classList.add('show'); });
+          function done(choice){ dlg.classList.remove('show'); setTimeout(function(){ dlg.remove(); }, 200); resolve(choice); }
+          dlg.querySelectorAll('.dd-btn').forEach(function(b){ b.addEventListener('click', function(){ done(b.dataset.c); }); });
+          dlg.querySelector('.dd-backdrop').addEventListener('click', function(){ done('skip'); });
+        });
+      }
+
+      // 库名 → 短键（"去原子库查看"跳转 atoms.html?type= 用）
+      function libKeyOf(lib){
+        const m = { '卖点提炼':'motif','钩子开头':'hook','分镜节奏':'storyboard','风格锁定':'style','平台调性':'platform','爆款案例':'case','失败修复':'rescue' };
+        return m[lib] || 'motif';
+      }
+      // decode 草稿 → AtomCard（对齐原子库 schema）
+      function draftToAtomCard(d, lib, mode){
+        const today = new Date().toISOString().slice(0, 10);
+        const tags = (d.tags || []).slice();
+        if (mode === 'variant') tags.push('变体');
+        const conf = Number(d.confidence) || 0;
+        const risks = d.riskFlags || [];
+        return {
+          title: d.title,
+          library: lib,
+          libKey: libKeyOf(lib),
+          atomType: d.atomType,
+          summary: d.summary || '',
+          template: d.template || '',
+          variables: d.variables || [],
+          domains: d.domains || [],
+          tags: tags,
+          signals: { score: Math.round(conf * 100) / 10, usageCount: 0, successRate: null, freshnessScore: 8.0 },
+          source: {
+            type: 'video_analysis',                              // 来源类型
+            url: (lastInput && lastInput.url) || '',
+            platform: (lastInput && lastInput.platform) || '',
+            collectedAt: today,
+            evidence: d.evidence || ''                           // evidence → source 备注
+          },
+          failurePatterns: d.failurePatterns || [],
+          repairSuggestions: d.repairSuggestions || [],
+          promptTemplate: '', negativePrompt: '',                // decode 不产提示词包，留空
+          mechanism: d.summary || '',
+          // decode 专有元数据
+          confidence: conf,
+          riskFlags: risks,
+          safety: { riskLevel: risks.length ? 'caution' : 'normal', forbiddenUse: risks.slice() }
+        };
+      }
+
+      // 收录最终结果：真写库 + 埋点 + 成功跳转
+      function commitFinal(accepted, skipped){
+        if (!accepted.length){
+          KW.toast(skipped ? ('跳过 ' + skipped + ' 条重复，未收录') : '未收录任何草稿', '');
+          return;
+        }
+        const ids = [];
+        let targetLib = null;
+        accepted.forEach(function(item){
+          const card = draftToAtomCard(item.draft, item.lib, item.mode);
+          const saved = KW_DL.addAtomCard(card);              // 真写库
+          ids.push(saved.id);
+          targetLib = item.lib;                                // 多库时跳转取最后一个
+          if (window.KW_DL) KW_DL.logEvent('decode.accept', { id: saved.id, library: item.lib, mode: item.mode });
+        });
+        if (window.KW_DL) KW_DL.logEvent('decode.accept.batch', { count: ids.length, skipped: skipped || 0 });
+
+        // 从草稿列表移除已收录的，重渲染
+        const acceptedDrafts = accepted.map(function(a){ return a.draft; });
+        drafts = drafts.filter(function(d){ return acceptedDrafts.indexOf(d) < 0; });
+        renderDrafts();
+
+        // 成功 toast + 持久成功条（带"去原子库查看"链接）
+        KW.toast('已收录 ' + ids.length + ' 条到原子库', 'success');
+        const bar = document.createElement('div');
+        bar.className = 'dc-success-bar';
+        bar.innerHTML = '✅ 已收录 <b>' + ids.length + '</b> 条到原子库' +
+          (skipped ? ' · 跳过 ' + skipped + ' 条重复' : '') +
+          ' <a href="atoms.html?type=' + libKeyOf(targetLib) + '">去原子库查看 →</a>';
+        resultsEl.insertBefore(bar, resultsEl.firstChild);
+      }
+
+      // 一键收录选中（防连击 + 去重提醒）
+      function acceptSelected(){
+        if (accepting) return;
+        const selected = drafts.filter(function(d){ return d._checked; });
+        if (!selected.length){ KW.toast('请先勾选要收录的草稿', 'error'); return; }
+        accepting = true;
+        const btn = resultsEl.querySelector('.dc-tb[data-act="accept"]');
+        const orig = btn ? btn.textContent : '';
+        if (btn){ btn.disabled = true; btn.textContent = '收录中…'; }
+        (async function(){
+          const accepted = [];
+          let skipped = 0;
+          for (let k = 0; k < selected.length; k++){
+            const d = selected[k];
+            const lib = atomTypeToLibrary(d.atomType);
+            const existing = (window.KW_DL ? (KW_DL.getAtomCards({ library: lib }) || []) : []);
+            const dup = existing.find(function(a){ return a.atomType === d.atomType && similar(a.title, d.title); });
+            let mode = 'keep';
+            if (dup){
+              mode = await confirmDedup(d, dup);
+              if (mode === 'skip'){ skipped++; continue; }
+            }
+            accepted.push({ draft: d, lib: lib, mode: mode });
+          }
+          commitFinal(accepted, skipped);
+          if (btn){ btn.disabled = false; btn.textContent = orig; }
+          accepting = false;
+        })();
+      }
+
+      function draftCardHTML(d){
+        const green = isGreen(d);
+        const conf = Math.round((Number(d.confidence) || 0) * 100);
+        const risks = d.riskFlags || [];
+        const vars = (d.variables || []).map(function(v){ return '<div class="dd-var">• <b>{' + esc(v.name) + '}</b> 例：' + esc(v.example) + '</div>'; }).join('');
+        const fps = (d.failurePatterns || []).map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('');
+        return '<article class="draft-card ' + (green ? 'green' : 'yellow') + '" style="--tc:' + typeColor(d.atomType) + '" data-i="' + d._i + '">' +
+          '<input type="checkbox" class="dcard-check" data-i="' + d._i + '"' + (d._checked ? ' checked' : '') + ' />' +
+          '<span class="dcard-triage ' + (green ? 'green' : 'yellow') + '">' + (green ? '✓ 建议入库' : '⚠ 需确认') + '</span>' +
+          '<h3 class="dcard-title">' + esc(d.title) + '</h3>' +
+          '<div class="dcard-meta">' +
+            '<span class="dcard-type">' + esc(d.atomType || '') + '</span>' +
+            '<span class="dcard-conf" style="color:' + confColor(d.confidence) + '">置信 ' + conf + '%</span>' +
+            (risks.length ? '<span class="dcard-risk"><span class="dot"></span>' + risks.map(esc).join(' / ') + '</span>' : '') +
+          '</div>' +
+          '<div class="dcard-summary">' + esc(d.summary || '') + '</div>' +
+          '<div class="dcard-template">' + esc(d.template || '') + '</div>' +
+          '<div class="dcard-foot">' +
+            '<span class="dcard-expand"><span class="chev">▸</span> 变量 / 出处 / 翻车点</span>' +
+            '<span class="dcard-edit" data-i="' + d._i + '">✎ 编辑</span>' +
+          '</div>' +
+          '<div class="dcard-detail"><div class="dcard-detail-inner">' +
+            (vars ? '<div class="dd-h">变量</div>' + vars : '') +
+            (d.evidence ? '<div class="dd-h">原文出处</div><div class="dd-evidence">"' + esc(d.evidence) + '"</div>' : '') +
+            (fps ? '<div class="dd-h">翻车点</div><ul class="dd-fp">' + fps + '</ul>' : '') +
+          '</div></div>' +
+        '</article>';
+      }
+
+      function renderDrafts(){
+        if (!drafts.length){ resultsEl.innerHTML = ''; return; }
+        const greenN = drafts.filter(isGreen).length;
+        const selN = drafts.filter(function(d){ return d._checked; }).length;
+        const visible = (showOnly === 'yellow') ? drafts.filter(function(d){ return !isGreen(d); }) : drafts;
+        resultsEl.innerHTML =
+          '<div class="dc-results-head"><div class="dc-results-title">解构草稿 <span>' + drafts.length + ' 条 · 建议入库 ' + greenN + ' · 需确认 ' + (drafts.length - greenN) + '</span></div></div>' +
+          '<div class="dc-toolbar">' +
+            '<button class="dc-tb" data-act="selectGreen">✓ 全选绿牌</button>' +
+            '<button class="dc-tb' + (showOnly === 'yellow' ? ' active' : '') + '" data-act="onlyYellow">⚠ 只看黄牌</button>' +
+            '<button class="dc-tb danger" data-act="clear">🗑 清空</button>' +
+            '<span style="flex:1"></span>' +
+            '<button class="dc-tb primary" data-act="accept">⬆ 一键收录选中 (' + selN + ')</button>' +
+          '</div>' +
+          '<div class="dc-grid">' + visible.map(draftCardHTML).join('') + '</div>';
+
+        // 工具栏
+        resultsEl.querySelector('.dc-toolbar').addEventListener('click', function(e){
+          const b = e.target.closest('.dc-tb'); if (!b) return;
+          const act = b.dataset.act;
+          if (act === 'selectGreen'){ drafts.forEach(function(d){ if (isGreen(d)) d._checked = true; }); renderDrafts(); }
+          else if (act === 'onlyYellow'){ showOnly = (showOnly === 'yellow') ? 'all' : 'yellow'; renderDrafts(); }
+          else if (act === 'clear'){ drafts = []; showOnly = 'all'; resultsEl.innerHTML = ''; }
+          else if (act === 'accept'){ acceptSelected(); }
+        });
+        // 展开/收起
+        resultsEl.querySelectorAll('.dcard-expand').forEach(function(ex){
+          ex.addEventListener('click', function(){
+            const detail = ex.closest('.draft-card').querySelector('.dcard-detail');
+            const open = detail.classList.toggle('open');
+            ex.classList.toggle('open', open);
+          });
+        });
+        // 编辑
+        resultsEl.querySelectorAll('.dcard-edit').forEach(function(ed){
+          ed.addEventListener('click', function(){ openEdit(parseInt(ed.dataset.i, 10)); });
+        });
+        // 勾选 → 写回 + 更新收录数
+        resultsEl.querySelectorAll('.dcard-check').forEach(function(cb){
+          cb.addEventListener('change', function(){
+            const d = drafts.find(function(x){ return String(x._i) === cb.dataset.i; });
+            if (d) d._checked = cb.checked;
+            const acc = resultsEl.querySelector('.dc-tb[data-act="accept"]');
+            if (acc) acc.textContent = '⬆ 一键收录选中 (' + drafts.filter(function(x){ return x._checked; }).length + ')';
+          });
+        });
+      }
+
+      // ===== 开始解构 =====
+      document.getElementById('dcRun').addEventListener('click', function () {
+        const input = getInput();
+        if (!input.text) {
+          KW.toast('请先粘贴标题 / 文案 / 字幕', 'error');
+          document.getElementById('dcText').focus();
+          return;
+        }
+        lastInput = input;
+        const btn = this;
+        const orig = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = '⚙️ 解构中…';
+        if (window.KW_DL) KW_DL.logEvent('decode.parse.start', { platform: input.platform, hasVisual: !!input.visual_desc, focusCount: input.focus.length });
+
+        // 模拟模型延迟
+        setTimeout(function(){
+          const raw = mockParse(input);          // 模拟模型返回（带解释文字 + 围栏）
+          const parsed = cleanAndParseJSON(raw); // 清洗层
+          btn.disabled = false;
+          btn.textContent = orig;
+          if (!parsed.ok || !parsed.data.length) {
+            if (window.KW_DL) KW_DL.logEvent('decode.parse.fail', { error: parsed.error || '无有效原子' });
+            KW.toast('解析失败：' + (parsed.error || '无有效原子'), 'error');
+            return;
+          }
+          drafts = parsed.data.map(function(a, i){ return Object.assign({ _i: i, _checked: isGreen(a) }, a); });
+          if (window.KW_DL) KW_DL.logEvent('decode.parse.success', { count: drafts.length });
+          renderDrafts();
+          resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 650);
+      });
+    })();
+  </script>
+  <script src="../js/widget.js"></script>
+</body>
+</html>

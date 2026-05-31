@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>开物 · 急救方案详情</title>
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/rescue.css" />
+</head>
+<body class="rescue-page">
+
+  <div class="page-bg" aria-hidden="true">
+    <img src="../assets/hero-hand.png" alt="" />
+  </div>
+
+  <header class="rs-header">
+    <a class="rs-brand" href="../index.html">
+      <span class="fn-mark">开</span>
+      <span class="fn-name">开物</span>
+      <span class="fn-back">← 回首页</span>
+    </a>
+    <div class="rs-actions">
+      <a class="btn-glow ghost sm" href="rescue.html">← 回修复库</a>
+      <a class="btn-glow ghost sm" href="history.html">📂 历史</a>
+    </div>
+  </header>
+
+  <main class="rs-main" id="detailMain">
+
+    <!-- 详情 Hero -->
+    <section class="rsd-hero" id="rsdHero"></section>
+
+    <!-- 场景列表 -->
+    <section class="rsd-scenes" id="rsdScenes"></section>
+
+    <!-- 其他症状跳转 -->
+    <section class="rsd-others">
+      <h3>其他症状</h3>
+      <div class="rsd-others-grid" id="rsdOthersGrid"></div>
+    </section>
+
+  </main>
+
+  <!-- Empty state (id 无效时) -->
+  <div id="emptyState" style="display:none; text-align:center; padding: 120px 24px; color: rgba(255,255,255,0.55);">
+    <div style="font-size: 64px; margin-bottom: 18px;">🤔</div>
+    <h2 style="font-size: 24px; color:#fff; margin: 0 0 10px;">没找到这个症状</h2>
+    <p>回到修复库选一个吧。</p>
+    <a class="btn-glow primary" href="rescue.html" style="margin-top: 18px;">回修复库 →</a>
+  </div>
+
+  <footer class="imm-footer-mini">
+    开物会记录你的使用数据用于改进方法论模型 · 数据匿名化处理 · 可在
+    <a href="history.html">历史页</a>一键导出或删除 ·
+    <a href="data-policy.html">数据透明性说明</a>
+  </footer>
+
+  <script src="../js/data-layer.js"></script>
+  <script src="../js/common.js"></script>
+  <script src="../js/rescue-data.js"></script>
+  <script src="../js/rescue-detail.js"></script>
+  <script src="../js/widget.js"></script>
+</body>
+</html>

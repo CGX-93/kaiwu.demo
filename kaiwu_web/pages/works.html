@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>开物 · 创作开源社区</title>
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/works.css" />
+</head>
+<body class="works-page">
+
+  <div class="page-bg" aria-hidden="true">
+    <img src="../assets/hero-hand.png" alt="" />
+  </div>
+
+  <header class="wk-header">
+    <a class="wk-brand" href="../index.html">
+      <span class="fn-mark">开</span>
+      <span class="fn-name">开物</span>
+      <span class="fn-back">← 回首页</span>
+    </a>
+    <div class="wk-nav-actions">
+      <a class="btn-glow ghost sm" href="rescue.html">🚑 修复库</a>
+      <a class="btn-glow primary sm" href="question.html?dir=ecom">+ 造一份新工单</a>
+    </div>
+  </header>
+
+  <main class="wk-main">
+
+    <!-- Hero -->
+    <section class="wk-hero">
+      <div class="wk-eyebrow">
+        <span class="dot-pulse"></span>
+        WORKS · 创作开源社区
+      </div>
+      <h1 class="wk-title">开物·<em>作品集</em></h1>
+      <p class="wk-sub">我们用开物做出了什么 · 你也可以放上来</p>
+      <p class="wk-aside">作品 + 工单 + 实际数据 · 完整开源 · 让每一份创作过程都被看见</p>
+    </section>
+
+    <!-- Tab Nav -->
+    <div class="wk-tabs" id="wkTabs">
+      <button class="wk-tab active" data-tab="open">
+        🌱 自由创作区<span class="wk-tab-count" id="cntOpen">0</span>
+      </button>
+      <button class="wk-tab" data-tab="featured">
+        ⭐ 开物精选<span class="wk-tab-count" id="cntFeatured">0</span>
+      </button>
+      <button class="wk-tab" data-tab="signed">
+        🏆 签约创作者<span class="wk-tab-count">0</span>
+      </button>
+    </div>
+
+    <!-- ============ Tab 1: 自由创作区 ============ -->
+    <div class="wk-panel active" data-panel="open">
+
+      <!-- 顶部引导卡 -->
+      <div class="open-invite">
+        <div class="oi-icon">🌱</div>
+        <div class="oi-body">
+          <h3 class="oi-title">让你的创作<em>被看见</em></h3>
+          <p class="oi-desc">提交你的作品 + 工单 + 实际数据 · 加入开物开源社区<br/>每一份创作过程都会进入方法论训练库，让 AI 越来越懂创作</p>
+        </div>
+        <button class="btn-glow primary" id="btnSubmit">
+          <span>+ 提交我的创作</span>
+        </button>
+      </div>
+
+      <!-- 作品网格 -->
+      <div class="cases-grid" id="openCasesGrid"></div>
+
+      <!-- 空状态 -->
+      <div class="empty-cta" id="openEmpty" style="display:none">
+        <div class="ec-em">🌱</div>
+        <h3>等待第一份开源创作</h3>
+        <p>使用开物完成创作后，点 result 页的「我做出来了」就能加入这里<br/>每个作品都附原始工单 · 别人可以"用这份做一条"</p>
+        <a class="btn-glow primary" href="question.html?dir=ecom">立即开始造物 <span class="arrow">→</span></a>
+      </div>
+
+    </div>
+
+    <!-- ============ Tab 2: 开物精选 ============ -->
+    <div class="wk-panel" data-panel="featured">
+
+      <div class="featured-head">
+        <h2>⭐ 开物精选</h2>
+        <p>编辑挑选的优秀作品 · 持续更新</p>
+      </div>
+
+      <!-- 区块 A：开物团队作品 -->
+      <section class="featured-block">
+        <div class="fb-head">
+          <h3>开物团队作品</h3>
+          <span class="fb-tag">原创</span>
+        </div>
+
+        <!-- 当前主推：刻舟求剑 -->
+        <div class="kezhou-card" id="kezhouCard">
+          <div class="kc-cover" style="--gd1:#1E3A5F;--gd2:#1B7B8F">
+            <div class="kc-glyph">舟</div>
+            <div class="kc-status">即将发布</div>
+          </div>
+          <div class="kc-body">
+            <span class="kc-pill">成语短片系列 · 首发</span>
+            <h3 class="kc-title">《刻舟求剑》：我们找的不是剑，是回不去的自己</h3>
+            <p class="kc-desc">关于「停滞与变化」的现代寓言 · 那些我们以为没变的，其实早已悄悄飘走</p>
+            <div class="kc-platforms">
+              <span class="wk-plat douyin">🎵 抖音</span>
+              <span class="wk-plat xhs">📕 小红书</span>
+              <span class="wk-plat wechat">📺 视频号</span>
+            </div>
+            <div class="kc-actions">
+              <button class="btn-glow ghost sm" id="btnSubscribe">📬 发布时通知我</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 已规划的成语标签条（不是卡片） -->
+        <div class="planned-row">
+          <div class="pr-label">成语系列持续更新中：</div>
+          <div class="pr-tags">
+            <span class="pr-tag">掩耳盗铃</span>
+            <span class="pr-tag">朝三暮四</span>
+            <span class="pr-tag">削足适履</span>
+            <span class="pr-tag">邯郸学步</span>
+            <span class="pr-tag">画饼充饥</span>
+            <span class="pr-tag">南辕北辙</span>
+            <span class="pr-tag">叶公好龙</span>
+            <span class="pr-tag">买椟还珠</span>
+            <span class="pr-tag">守株待兔</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 区块 B：社区精选 -->
+      <section class="featured-block">
+        <div class="fb-head">
+          <h3>社区精选</h3>
+          <span class="fb-tag green">编辑推荐</span>
+        </div>
+
+        <div class="cases-grid" id="featuredCasesGrid"></div>
+
+        <div class="empty-cta-mini" id="featuredEmpty">
+          <div class="em-em">✨</div>
+          <p>等待第一批社区精选<br/><span>编辑会从「自由创作区」中挑选优秀作品到这里</span></p>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ============ Tab 3: 签约创作者 ============ -->
+    <div class="wk-panel" data-panel="signed">
+      <div class="empty-cta">
+        <div class="ec-em">🏆</div>
+        <h3>签约创作者通道开放后展示</h3>
+        <p>优秀创作者可获得：算力补贴 + 流量扶持 + 专属作品展示位<br/>我们正在评估第一批合作创作者</p>
+        <button class="btn-glow primary" id="btnSignedInfo">了解签约条件</button>
+      </div>
+    </div>
+
+    <!-- 底部 CTA -->
+    <section class="works-bottom-cta">
+      <h3>想用开物做<em>你的作品？</em></h3>
+      <p>从一份精细到导演脚本级的工单开始 · 每一份提交都让开物更懂创作</p>
+      <div class="wbc-actions">
+        <a class="btn-glow primary" href="question.html?dir=ecom" data-works-cta="start">
+          立即开始造物 <span class="arrow">→</span>
+        </a>
+        <a class="btn-glow ghost" href="rescue.html" data-works-cta="rescue">
+          先看失败修复库
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="imm-footer-mini">
+    开物会记录你的使用数据用于改进方法论模型 · 数据匿名化处理 ·
+    <a href="history.html">历史页</a>一键导出或删除 ·
+    <a href="data-policy.html">数据透明性说明</a>
+  </footer>
+
+  <!-- 提交创作 Modal（与 result.html 同款，复用增强版） -->
+  <div class="submit-modal" id="submitModal">
+    <div class="submit-box" id="smBoxForm">
+      <h3>🎉 你做出来了！</h3>
+      <p class="sm-sub">把你的作品加入开物开源社区</p>
+      <p class="sm-desc">
+        你的作品 + 工单 + 实际效果 = 一份完整创作过程<br/>
+        加入开物方法论训练 · 让开物越来越懂创作 · 再回馈给你更好的作品建议
+      </p>
+
+      <!-- 选择关联工单 -->
+      <p class="sm-label">关联工单 <span class="req">*</span></p>
+      <select class="sm-select" id="smOrderSelect">
+        <option value="">选择一份历史工单 ...</option>
+      </select>
+
+      <!-- 作品标题 -->
+      <p class="sm-label">作品标题 <span class="req">*</span></p>
+      <input type="text" class="sm-input" id="smWorkTitle" placeholder="比如：通勤包测评 · 上班路上的真实体验" />
+
+      <!-- 评分 -->
+      <label class="sm-stars-row">
+        <span class="l">效果评分</span>
+        <span class="sm-stars">
+          <span class="star" data-n="1">★</span>
+          <span class="star" data-n="2">★</span>
+          <span class="star" data-n="3">★</span>
+          <span class="star" data-n="4">★</span>
+          <span class="star" data-n="5">★</span>
+        </span>
+      </label>
+
+      <!-- 成片链接 -->
+      <p class="sm-label">成片链接 <span class="req">*</span></p>
+      <input type="url" class="sm-input" id="smResultUrl" placeholder="https://v.douyin.com/... · 抖音 / 小红书 / 视频号 / B 站" />
+
+      <!-- 实际数据 -->
+      <p class="sm-label">实际数据 <span class="opt">选填</span></p>
+      <div class="sm-metrics">
+        <div class="sm-metric"><span>👁️ 播放</span><input type="text" id="smViews"    placeholder="0" /></div>
+        <div class="sm-metric"><span>👍 点赞</span><input type="text" id="smLikes"    placeholder="0" /></div>
+        <div class="sm-metric"><span>💬 评论</span><input type="text" id="smComments" placeholder="0" /></div>
+      </div>
+
+      <!-- 创作心得 -->
+      <p class="sm-label">创作心得 <span class="opt">选填 · 100 字以内</span></p>
+      <textarea class="sm-input" id="smThoughts" maxlength="100" rows="2" placeholder="哪里特别好用 / 哪里需要改进 / 拍摄时遇到的坑 ..."></textarea>
+
+      <!-- 创作者署名 -->
+      <p class="sm-label">创作者署名 <span class="opt">选填</span></p>
+      <input type="text" class="sm-input" id="smCreatorName" placeholder="默认显示：造物者 · kw_XXXX" />
+
+      <!-- 是否公开 -->
+      <label class="sm-checkbox">
+        <input type="checkbox" id="smIsPublic" checked />
+        <span>公开到「自由创作区」让别人看见、参考</span>
+      </label>
+
+      <div class="sm-actions">
+        <button class="btn-glow ghost" id="smCancel">取消</button>
+        <button class="btn-glow primary" id="smSubmit">提交创作 →</button>
+      </div>
+    </div>
+
+    <!-- 成功态 -->
+    <div class="submit-box sm-success" id="smBoxSuccess" style="display:none">
+      <div class="sm-success-icon">✨</div>
+      <h3>创作过程已沉淀</h3>
+      <p class="sm-success-desc">
+        你的完整创作链路（工单+成片+数据）已加入<strong>开物方法论训练库</strong>
+      </p>
+      <div class="sm-success-stats">
+        累计已沉淀 <strong id="smTotalCases">—</strong> 份完整创作过程 ·
+        训练数据规模 <strong id="smTotalSize">—</strong> 条
+      </div>
+      <div class="sm-success-actions">
+        <a class="btn-glow ghost" href="#" id="smGoOpen">查看自由创作区</a>
+        <a class="btn-glow primary" href="question.html?dir=ecom">再做一份 →</a>
+        <button class="btn-glow ghost" id="smClose">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/data-layer.js"></script>
+  <script src="../js/common.js"></script>
+  <script src="../js/works-data.js"></script>
+  <script src="../js/works.js"></script>
+  <script src="../js/widget.js"></script>
+</body>
+</html>

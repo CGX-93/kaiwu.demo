@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>开物 · 共建方法论</title>
+  <link rel="stylesheet" href="../css/common.css" />
+  <style>
+    body.contrib-page{--teal1:#00D4AA;--teal2:#00B4D8;background:#050505;color:#fff;min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;}
+    .page-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+    .page-bg img{width:130%;height:130%;position:absolute;top:-15%;left:-15%;object-fit:cover;object-position:center 40%;filter:blur(120px) brightness(0.45);opacity:0.3;}
+    .page-bg::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 38%,rgba(0,212,170,0.06) 0%,rgba(5,5,5,0.7) 60%,rgba(5,5,5,0.96) 100%);}
+
+    .contrib-wrap{position:relative;z-index:2;flex:1;display:flex;align-items:center;justify-content:center;padding:32px 20px;}
+    .contrib-card{width:100%;max-width:560px;padding:40px 38px;border-radius:24px;background:rgba(255,255,255,0.04);backdrop-filter:blur(26px) saturate(160%);-webkit-backdrop-filter:blur(26px) saturate(160%);border:1px solid rgba(0,212,170,0.18);box-shadow:0 40px 90px -20px rgba(0,0,0,0.7);}
+
+    .contrib-logo{width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,var(--teal1),var(--teal2));display:grid;place-items:center;font-size:26px;font-weight:800;color:#04201b;margin:0 auto 18px;box-shadow:0 14px 32px rgba(0,180,216,0.4);}
+    .contrib-title{font-size:24px;font-weight:800;text-align:center;margin:0 0 8px;background:linear-gradient(135deg,var(--teal1),var(--teal2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+    .contrib-sub{font-size:13px;color:rgba(255,255,255,0.55);text-align:center;margin:0 0 26px;line-height:1.7;}
+
+    .field-label{font-size:12.5px;color:rgba(255,255,255,0.6);margin:20px 0 8px;font-weight:600;}
+    .field-label .req{color:var(--teal1);margin-left:2px;}
+    .field-label .opt{color:rgba(255,255,255,0.3);font-weight:400;margin-left:4px;}
+
+    .chip-row{display:flex;flex-wrap:wrap;gap:8px;}
+    .chip{padding:8px 16px;border-radius:999px;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.7);font-family:inherit;font-size:13px;cursor:pointer;transition:all 200ms;}
+    .chip:hover{border-color:rgba(0,212,170,0.5);color:#fff;}
+    .chip.active{background:linear-gradient(135deg,var(--teal1),var(--teal2));border-color:transparent;color:#04201b;font-weight:700;box-shadow:0 8px 22px rgba(0,180,216,0.35);}
+
+    .c-input,.c-textarea{width:100%;padding:13px 16px;border-radius:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:#fff;font-family:inherit;font-size:15px;box-sizing:border-box;transition:border-color 200ms,background 200ms;}
+    .c-textarea{resize:vertical;min-height:128px;line-height:1.6;}
+    .c-input:focus,.c-textarea:focus{outline:none;border-color:rgba(0,212,170,0.6);background:rgba(255,255,255,0.07);}
+    .c-input::placeholder,.c-textarea::placeholder{color:rgba(255,255,255,0.32);}
+
+    .src-row{display:flex;gap:10px;}
+    .src-opt{flex:1;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.14);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.7);font-family:inherit;font-size:13.5px;cursor:pointer;text-align:center;transition:all 200ms;}
+    .src-opt:hover{border-color:rgba(0,212,170,0.5);}
+    .src-opt.active{border-color:var(--teal1);background:rgba(0,212,170,0.12);color:#fff;}
+
+    #sourceNoteWrap{max-height:0;overflow:hidden;transition:max-height 300ms ease,margin 300ms ease;margin-top:0;}
+    #sourceNoteWrap.open{max-height:180px;margin-top:12px;}
+
+    .c-submit{width:100%;margin-top:28px;padding:15px;border-radius:999px;border:none;background:linear-gradient(135deg,var(--teal1),var(--teal2));color:#04201b;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 14px 32px rgba(0,180,216,0.4);transition:transform 220ms;}
+    .c-submit:hover{transform:translateY(-2px);}
+
+    .c-back{display:block;text-align:center;margin-top:18px;font-size:12.5px;color:rgba(255,255,255,0.4);text-decoration:none;}
+    .c-back:hover{color:rgba(255,255,255,0.7);}
+
+    /* 成功态 */
+    .success-view{display:none;text-align:center;padding:14px 6px;}
+    .success-view.show{display:block;animation:cFadeUp 420ms ease;}
+    @keyframes cFadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+    .success-emoji{font-size:56px;line-height:1;margin-bottom:18px;}
+    .success-title{font-size:22px;font-weight:800;margin:0 0 12px;background:linear-gradient(135deg,var(--teal1),var(--teal2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+    .success-desc{font-size:13.5px;color:rgba(255,255,255,0.6);line-height:1.8;margin:0 auto 28px;max-width:380px;}
+    .success-desc b{color:var(--teal1);font-weight:700;}
+    .success-actions{display:flex;gap:12px;}
+    .success-actions button,.success-actions a{flex:1;padding:13px;border-radius:999px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;text-align:center;transition:transform 200ms;}
+    .btn-again{border:none;background:linear-gradient(135deg,var(--teal1),var(--teal2));color:#04201b;box-shadow:0 12px 28px rgba(0,180,216,0.35);}
+    .btn-home{border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.04);color:#fff;}
+    .success-actions button:hover,.success-actions a:hover{transform:translateY(-2px);}
+  </style>
+</head>
+<body class="contrib-page">
+  <div class="page-bg" aria-hidden="true"><img src="../assets/hero-hand.png" alt="" /></div>
+
+  <div class="contrib-wrap">
+    <div class="contrib-card">
+      <!-- 表单视图 -->
+      <div id="formView">
+        <div class="contrib-logo">开</div>
+        <h1 class="contrib-title">共建开物方法论</h1>
+        <p class="contrib-sub">你的好提示词、好分镜、好钩子、好案例，都能让开物变强</p>
+
+        <div class="field-label">投稿类型<span class="req">*</span></div>
+        <div class="chip-row" id="typeChips">
+          <button type="button" class="chip active" data-type="prompt">提示词</button>
+          <button type="button" class="chip" data-type="storyboard">分镜</button>
+          <button type="button" class="chip" data-type="hook">钩子</button>
+          <button type="button" class="chip" data-type="case">案例</button>
+          <button type="button" class="chip" data-type="other">其他</button>
+        </div>
+
+        <div class="field-label">标题<span class="req">*</span></div>
+        <input type="text" class="c-input" id="cTitle" placeholder="一句话概括这条方法论" maxlength="60" />
+
+        <div class="field-label">详细内容<span class="req">*</span></div>
+        <textarea class="c-textarea" id="cContent" placeholder="完整写下你的提示词 / 分镜结构 / 钩子写法 / 案例拆解，越具体越容易过审"></textarea>
+
+        <div class="field-label">标签<span class="opt">选填 · 空格分隔</span></div>
+        <input type="text" class="c-input" id="cTags" placeholder="如：电商 开箱 高转化" />
+
+        <div class="field-label">来源<span class="req">*</span></div>
+        <div class="src-row" id="srcRow">
+          <button type="button" class="src-opt active" data-src="original">原创</button>
+          <button type="button" class="src-opt" data-src="repost">转载</button>
+        </div>
+        <div id="sourceNoteWrap">
+          <input type="text" class="c-input" id="cSourceNote" placeholder="转载来源说明（作者 / 出处 / 链接）" />
+        </div>
+
+        <button class="c-submit" id="submitBtn">提交贡献</button>
+        <a class="c-back" href="../index.html">← 返回首页</a>
+      </div>
+
+      <!-- 成功态视图 -->
+      <div class="success-view" id="successView">
+        <div class="success-emoji">🌱</div>
+        <h2 class="success-title">已加入审核队列</h2>
+        <p class="success-desc">通过审核后进入对应原子库 · 你将获得 <b>「贡献者」徽章</b></p>
+        <div class="success-actions">
+          <button class="btn-again" id="againBtn">再投一条</button>
+          <a class="btn-home" href="../index.html">回首页</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/data-layer.js"></script>
+  <script src="../js/common.js"></script>
+  <script>
+    (function () {
+      var selectedType = 'prompt';
+      var selectedSrc = 'original';
+
+      var formView = document.getElementById('formView');
+      var successView = document.getElementById('successView');
+      var titleEl = document.getElementById('cTitle');
+      var contentEl = document.getElementById('cContent');
+      var tagsEl = document.getElementById('cTags');
+      var noteEl = document.getElementById('cSourceNote');
+      var noteWrap = document.getElementById('sourceNoteWrap');
+
+      // 类型 chip：5 选 1
+      document.getElementById('typeChips').addEventListener('click', function (e) {
+        var chip = e.target.closest('.chip');
+        if (!chip) return;
+        this.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('active'); });
+        chip.classList.add('active');
+        selectedType = chip.dataset.type;
+      });
+
+      // 来源切换：转载展开来源说明
+      document.getElementById('srcRow').addEventListener('click', function (e) {
+        var opt = e.target.closest('.src-opt');
+        if (!opt) return;
+        this.querySelectorAll('.src-opt').forEach(function (o) { o.classList.remove('active'); });
+        opt.classList.add('active');
+        selectedSrc = opt.dataset.src;
+        noteWrap.classList.toggle('open', selectedSrc === 'repost');
+      });
+
+      // 提交
+      document.getElementById('submitBtn').addEventListener('click', function () {
+        var title = titleEl.value.trim();
+        var content = contentEl.value.trim();
+        if (!title) { KW.toast('请填写标题', 'error'); titleEl.focus(); return; }
+        if (!content) { KW.toast('请填写详细内容', 'error'); contentEl.focus(); return; }
+
+        var tags = tagsEl.value.trim().split(/\s+/).filter(Boolean);
+
+        KW_DL.addContribution({
+          type: selectedType,
+          title: title,
+          content: content,
+          tags: tags,
+          sourceType: selectedSrc,
+          sourceNote: selectedSrc === 'repost' ? noteEl.value.trim() : ''
+        });
+
+        formView.style.display = 'none';
+        successView.classList.add('show');
+      });
+
+      // 再投一条：重置表单
+      document.getElementById('againBtn').addEventListener('click', function () {
+        titleEl.value = '';
+        contentEl.value = '';
+        tagsEl.value = '';
+        noteEl.value = '';
+        selectedType = 'prompt';
+        selectedSrc = 'original';
+        document.querySelectorAll('#typeChips .chip').forEach(function (c, i) {
+          c.classList.toggle('active', i === 0);
+        });
+        document.querySelectorAll('#srcRow .src-opt').forEach(function (o, i) {
+          o.classList.toggle('active', i === 0);
+        });
+        noteWrap.classList.remove('open');
+        successView.classList.remove('show');
+        formView.style.display = '';
+      });
+    })();
+  </script>
+  <script src="../js/widget.js"></script>
+</body>
+</html>

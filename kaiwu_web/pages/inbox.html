@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>开物 · 灵感收纳箱</title>
+  <link rel="stylesheet" href="../css/common.css" />
+  <style>
+    body.inbox-page{--ac1:#7F77DD;--ac2:#534AB7;--ok:#3DD68C;--no:#FF5C5C;background:#070708;color:#fff;min-height:100vh;overflow-x:hidden;}
+
+    /* 非管理员拦截 */
+    .gate{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px;}
+    .gate-lock{font-size:48px;margin-bottom:18px;opacity:.8;}
+    .gate-title{font-size:18px;font-weight:700;margin:0 0 8px;}
+    .gate-sub{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;}
+    .gate-sub code{color:var(--ac1);background:rgba(127,119,221,0.14);padding:2px 7px;border-radius:6px;font-size:12.5px;}
+
+    /* 主界面 */
+    #adminView{display:none;}
+    .ib-wrap{max-width:760px;margin:0 auto;padding:28px 20px 80px;}
+
+    .ib-head{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+    .admin-badge{font-family:monospace;font-size:11px;font-weight:700;letter-spacing:2px;color:#FFB800;border:1px solid rgba(255,184,0,0.5);background:rgba(255,184,0,0.08);padding:4px 10px;border-radius:6px;}
+    .ib-head h1{font-size:22px;font-weight:800;margin:0;}
+    .ib-head-sub{font-size:12.5px;color:rgba(255,255,255,0.45);margin:0 0 22px;}
+
+    /* 收录新灵感 */
+    .intake{padding:20px;border-radius:18px;background:rgba(255,255,255,0.04);border:1px solid rgba(127,119,221,0.22);margin-bottom:22px;}
+    .intake-label{font-size:12.5px;color:rgba(255,255,255,0.55);font-weight:600;margin:0 0 8px;}
+    .intake textarea{width:100%;box-sizing:border-box;min-height:96px;resize:vertical;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:#fff;font-family:inherit;font-size:14px;line-height:1.6;transition:border-color 200ms;}
+    .intake textarea:focus{outline:none;border-color:rgba(127,119,221,0.6);}
+    .intake textarea::placeholder{color:rgba(255,255,255,0.3);}
+    .detect-box{font-size:12px;color:rgba(255,255,255,0.5);margin:8px 2px 0;min-height:18px;}
+    .detect-box b{color:var(--ac1);}
+    .intake-row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+    .intake-row .fld{flex:1;min-width:140px;}
+    .intake-row label{display:block;font-size:11.5px;color:rgba(255,255,255,0.45);margin-bottom:5px;}
+    .intake-row input,.intake-row select{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:#fff;font-family:inherit;font-size:13.5px;}
+    .intake-row input:focus,.intake-row select:focus{outline:none;border-color:rgba(127,119,221,0.6);}
+    .intake-row select option{background:#1a1a22;}
+    .intake-btn{margin-top:16px;width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--ac1),var(--ac2));color:#fff;font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;transition:transform 200ms;}
+    .intake-btn:hover{transform:translateY(-2px);}
+
+    /* 统计条 */
+    .stats-bar{display:flex;gap:8px;font-size:13px;color:rgba(255,255,255,0.7);padding:12px 16px;border-radius:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);margin-bottom:16px;flex-wrap:wrap;}
+    .stats-bar b{color:#fff;}
+    .stats-bar .sep{opacity:.3;}
+
+    /* 筛选 Tab */
+    .filter-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+    .filter-tab{padding:8px 16px;border-radius:999px;border:1px solid rgba(255,255,255,0.14);background:transparent;color:rgba(255,255,255,0.6);font-family:inherit;font-size:13px;cursor:pointer;transition:all 200ms;}
+    .filter-tab:hover{color:#fff;}
+    .filter-tab.active{background:linear-gradient(135deg,var(--ac1),var(--ac2));border-color:transparent;color:#fff;font-weight:700;}
+
+    /* 灵感卡片 */
+    .ib-list{display:flex;flex-direction:column;gap:12px;}
+    .ib-empty{text-align:center;padding:48px 0;color:rgba(255,255,255,0.35);font-size:14px;}
+    .ib-card{padding:16px;border-radius:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);}
+    .ib-card-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px;color:rgba(255,255,255,0.5);margin-bottom:10px;}
+    .ib-type{font-weight:700;padding:3px 10px;border-radius:6px;font-size:12px;}
+    .t-link{color:#5BA8FF;background:rgba(91,168,255,0.14);}
+    .t-storyboard{color:#B98BFF;background:rgba(185,139,255,0.14);}
+    .t-prompt{color:#3DD68C;background:rgba(61,214,140,0.14);}
+    .t-case{color:#FFB04D;background:rgba(255,176,77,0.14);}
+    .t-other{color:#9AA0B0;background:rgba(154,160,176,0.14);}
+    .ib-score{color:#FFB800;letter-spacing:1px;}
+    .ib-time{margin-left:auto;}
+    .ib-status{padding:2px 8px;border-radius:6px;font-size:11px;border:1px solid rgba(255,255,255,0.15);}
+    .ib-raw{font-size:14px;line-height:1.6;color:rgba(255,255,255,0.85);word-break:break-word;white-space:pre-wrap;background:rgba(0,0,0,0.25);border-radius:10px;padding:11px 13px;margin-bottom:12px;max-height:130px;overflow:auto;}
+    .ib-actions{display:flex;gap:10px;}
+    .ib-actions button{padding:8px 18px;border-radius:9px;border:1px solid;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;background:transparent;transition:all 180ms;}
+    .act-archive{color:var(--ok);border-color:rgba(61,214,140,0.45);}
+    .act-archive:hover:not(:disabled){background:rgba(61,214,140,0.14);}
+    .act-discard{color:var(--no);border-color:rgba(255,92,92,0.45);}
+    .act-discard:hover:not(:disabled){background:rgba(255,92,92,0.14);}
+    .ib-actions button:disabled{opacity:.4;cursor:default;}
+  </style>
+</head>
+<body class="inbox-page">
+  <!-- 非管理员拦截 -->
+  <div class="gate" id="gateView">
+    <div class="gate-lock">🔒</div>
+    <h1 class="gate-title">管理员专用</h1>
+    <p class="gate-sub">请通过 <code>?admin=true</code> 进入</p>
+  </div>
+
+  <!-- 主界面 -->
+  <div id="adminView">
+    <div class="ib-wrap">
+      <div class="ib-head">
+        <span class="admin-badge">ADMIN</span>
+        <h1>灵感收纳箱</h1>
+      </div>
+      <p class="ib-head-sub">粘贴值得收录的链接、分镜、提示词或案例，整理成原子库素材</p>
+
+      <!-- 收录新灵感 -->
+      <div class="intake">
+        <p class="intake-label">收录新灵感</p>
+        <textarea id="ibRaw" placeholder="粘贴链接 / 分镜文本 / 提示词 / 爆款案例 ..."></textarea>
+        <div class="detect-box" id="ibDetect"></div>
+        <div class="intake-row">
+          <div class="fld">
+            <label>来源平台</label>
+            <input type="text" id="ibSource" placeholder="如：抖音 / 小红书 / B站" />
+          </div>
+          <div class="fld">
+            <label>价值评分</label>
+            <select id="ibScore">
+              <option value="0">未评分</option>
+              <option value="1">★ 1 星</option>
+              <option value="2">★★ 2 星</option>
+              <option value="3">★★★ 3 星</option>
+              <option value="4">★★★★ 4 星</option>
+              <option value="5">★★★★★ 5 星</option>
+            </select>
+          </div>
+        </div>
+        <button class="intake-btn" id="ibAdd">收录</button>
+      </div>
+
+      <!-- 统计条 -->
+      <div class="stats-bar" id="ibStats"></div>
+
+      <!-- 筛选 Tab -->
+      <div class="filter-tabs" id="ibFilters">
+        <button class="filter-tab active" data-status="unprocessed">未处理</button>
+        <button class="filter-tab" data-status="archived">已入库</button>
+        <button class="filter-tab" data-status="discarded">已废弃</button>
+        <button class="filter-tab" data-status="">全部</button>
+      </div>
+
+      <!-- 列表 -->
+      <div class="ib-list" id="ibList"></div>
+    </div>
+  </div>
+
+  <script src="../js/data-layer.js"></script>
+  <script src="../js/common.js"></script>
+  <script>
+    (function () {
+      // 管理员拦截
+      var isAdmin = new URLSearchParams(location.search).get('admin') === 'true';
+      if (!isAdmin) return; // 仅显示 gate
+      document.getElementById('gateView').style.display = 'none';
+      document.getElementById('adminView').style.display = '';
+
+      var TYPE_LABEL = { link: '链接', storyboard: '分镜', prompt: '提示词', case: '案例', other: '其他' };
+      var STATUS_LABEL = { unprocessed: '未处理', archived: '已入库', discarded: '已废弃' };
+
+      // 类型识别（与 data-layer.addInboxItem 内部逻辑保持一致）
+      function detectType(text) {
+        text = (text || '').trim();
+        if (!text) return '';
+        if (/https?:\/\//.test(text)) return 'link';
+        if (/镜头|分镜|运镜|景别|推拉摇移/.test(text)) return 'storyboard';
+        if (/提示词|prompt|--ar|seed|midjourney/i.test(text)) return 'prompt';
+        if (/爆款|案例|播放量|点赞|涨粉/.test(text)) return 'case';
+        return 'other';
+      }
+      function esc(s) {
+        return String(s).replace(/[&<>"]/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+        });
+      }
+      function stars(n) {
+        n = Math.max(0, Math.min(5, n | 0));
+        if (!n) return '未评分';
+        return '★★★★★'.slice(0, n) + '☆☆☆☆☆'.slice(0, 5 - n);
+      }
+
+      var rawEl = document.getElementById('ibRaw');
+      var detectEl = document.getElementById('ibDetect');
+      var sourceEl = document.getElementById('ibSource');
+      var scoreEl = document.getElementById('ibScore');
+      var listEl = document.getElementById('ibList');
+      var statsEl = document.getElementById('ibStats');
+      var filtersEl = document.getElementById('ibFilters');
+      var currentStatus = 'unprocessed';
+
+      // 实时识别类型
+      rawEl.addEventListener('input', function () {
+        var t = detectType(rawEl.value);
+        detectEl.innerHTML = t ? '识别类型：<b>' + TYPE_LABEL[t] + '</b>' : '';
+      });
+
+      // 统计条
+      function renderStats() {
+        var all = KW_DL.getInboxItems();
+        var un = all.filter(function (x) { return x.status === 'unprocessed'; }).length;
+        var ar = all.filter(function (x) { return x.status === 'archived'; }).length;
+        statsEl.innerHTML = '共 <b>' + all.length + '</b> 条' +
+          '<span class="sep">·</span>未处理 <b>' + un + '</b>' +
+          '<span class="sep">·</span>已入库 <b>' + ar + '</b>';
+      }
+
+      // 列表
+      function renderList() {
+        var filter = currentStatus ? { status: currentStatus } : undefined;
+        var items = KW_DL.getInboxItems(filter);
+        if (!items.length) {
+          listEl.innerHTML = '<div class="ib-empty">暂无灵感</div>';
+          return;
+        }
+        listEl.innerHTML = items.map(function (it) {
+          var type = it.detectedType || 'other';
+          var showAll = !currentStatus;
+          return '<div class="ib-card">' +
+            '<div class="ib-card-top">' +
+              '<span class="ib-type t-' + type + '">' + (TYPE_LABEL[type] || '其他') + '</span>' +
+              (it.source ? '<span>来源：' + esc(it.source) + '</span>' : '') +
+              '<span class="ib-score">' + stars(it.score) + '</span>' +
+              (showAll ? '<span class="ib-status">' + (STATUS_LABEL[it.status] || it.status) + '</span>' : '') +
+              '<span class="ib-time">' + KW.fmtTimeShort(it.createdAt) + '</span>' +
+            '</div>' +
+            '<div class="ib-raw">' + esc(it.raw) + '</div>' +
+            '<div class="ib-actions">' +
+              '<button class="act-archive" data-id="' + it.id + '" data-act="archive"' + (it.status === 'archived' ? ' disabled' : '') + '>入库</button>' +
+              '<button class="act-discard" data-id="' + it.id + '" data-act="discard"' + (it.status === 'discarded' ? ' disabled' : '') + '>废弃</button>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+      }
+
+      function refresh() { renderStats(); renderList(); }
+
+      // 收录
+      document.getElementById('ibAdd').addEventListener('click', function () {
+        var raw = rawEl.value.trim();
+        if (!raw) { KW.toast('请粘贴灵感内容', 'error'); rawEl.focus(); return; }
+        KW_DL.addInboxItem({
+          raw: raw,
+          type: detectType(raw),
+          source: sourceEl.value.trim(),
+          score: parseInt(scoreEl.value, 10) || 0
+        });
+        rawEl.value = '';
+        sourceEl.value = '';
+        scoreEl.value = '0';
+        detectEl.innerHTML = '';
+        KW.toast('已收录到收纳箱', 'success');
+        refresh();
+      });
+
+      // 状态切换
+      listEl.addEventListener('click', function (e) {
+        var btn = e.target.closest('button[data-act]');
+        if (!btn) return;
+        var status = btn.dataset.act === 'archive' ? 'archived' : 'discarded';
+        KW_DL.updateInboxItem(btn.dataset.id, { status: status });
+        KW.toast(status === 'archived' ? '已入库' : '已废弃', 'success');
+        refresh();
+      });
+
+      // 筛选 Tab
+      filtersEl.addEventListener('click', function (e) {
+        var tab = e.target.closest('.filter-tab');
+        if (!tab) return;
+        this.querySelectorAll('.filter-tab').forEach(function (t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+        currentStatus = tab.dataset.status;
+        renderList();
+      });
+
+      refresh();
+    })();
+  </script>
+  <script src="../js/widget.js"></script>
+</body>
+</html>

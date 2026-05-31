@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>开物 · 你的造物工单</title>
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/result.css" />
+</head>
+<body class="result-page">
+
+  <!-- 全页氛围背景 -->
+  <div class="page-bg" aria-hidden="true">
+    <img src="../assets/hero-hand.png" alt="" />
+  </div>
+
+  <!-- 顶部 sticky 栏 -->
+  <header class="result-header">
+    <a class="rh-brand" href="../index.html">
+      <span class="fn-mark">开</span>
+      <span class="fn-name">开物</span>
+      <span class="fn-back">← 回首页</span>
+    </a>
+    <div class="rh-actions">
+      <a class="btn-glow ghost sm" href="question.html?dir=ecom">＋ 再造一份</a>
+      <a class="btn-glow ghost sm" href="history.html">📂 历史</a>
+    </div>
+  </header>
+
+  <main class="result-main">
+
+    <!-- 空状态 -->
+    <div id="emptyState" class="empty-state" style="display:none">
+      <div class="emoji">📭</div>
+      <h2>还没有工单</h2>
+      <p>先去答题，开物会基于你的回答生成完整的可执行工单。</p>
+      <a class="btn-glow primary" href="question.html?dir=ecom">开始造物 →</a>
+    </div>
+
+    <div id="resultMainContent">
+
+      <!-- Hero -->
+      <section class="result-hero">
+        <div class="rh-meta">
+          <span class="rh-pill"><span class="dot-pulse"></span>WORK ORDER · 造物工单</span>
+          <span class="rh-time" id="resultTime"></span>
+        </div>
+        <h1 class="result-title" id="resultTitle">工单</h1>
+        <p class="result-subline" id="resultSubline"></p>
+        <div class="rh-chips" id="resultChips"></div>
+      </section>
+
+      <!-- 深度切换 -->
+      <div class="depth-switch" id="depthSwitch" aria-label="工单深度切换"></div>
+
+      <!-- TOC -->
+      <nav class="result-toc" id="resultToc" aria-label="模块导航"></nav>
+
+      <!-- 模块列表 -->
+      <section class="modules" id="modules"></section>
+
+      <!-- 底部三按钮 -->
+      <footer class="result-footer">
+        <div class="rf-text">
+          这份工单已自动保存到本地。<br/>
+          每一次👍👎、每一次"做出来了"都会让开物对你这个类目的方法论更准。
+        </div>
+        <div class="rf-actions">
+          <button class="btn-glow ghost" id="btnSave">保存到历史</button>
+          <button class="btn-glow ghost" id="btnRegen">重新生成</button>
+          <button class="btn-glow primary" id="btnMadeIt">我做出来了 🎉</button>
+        </div>
+      </footer>
+
+      <!-- 底部原子沉淀小字 -->
+      <div class="atom-notice" id="atomNotice" aria-live="polite"></div>
+
+    </div>
+  </main>
+
+  <!-- 数据透明性 footer -->
+  <footer class="imm-footer" style="margin-top: 32px">
+    <div class="zone-inner" style="text-align:center; font-size: 11.5px; color: rgba(255,255,255,0.32); padding: 24px 36px;">
+      开物会记录你的使用数据用于改进方法论模型 · 数据匿名化处理 · 可在
+      <a href="history.html" style="color: rgba(255,184,0,0.85)">历史页</a>
+      一键导出或删除 ·
+      <a href="data-policy.html" style="color: rgba(255,184,0,0.85)">数据透明性说明</a>
+    </div>
+  </footer>
+
+  <!-- "我做出来了" Modal -->
+  <div class="feedback-modal" id="feedbackModal">
+    <div class="feedback-box" id="fbBoxForm">
+      <h3>🎉 你做出来了！</h3>
+      <p class="fb-sub">把你的创作过程沉淀到方法论训练库</p>
+      <p class="fb-twoline">
+        <span>· 你的作品 + 工单 + 实际效果 = 一份完整<strong>创作过程</strong></span>
+        <span>· 加入开物方法论训练 · 让开物越来越懂创作 · 再回馈给你更好的作品建议</span>
+      </p>
+
+      <p class="fb-label">作品标题 <span class="fb-req">*</span></p>
+      <input type="text" class="fb-field" id="fbWorkTitle" placeholder="例：通勤包测评 · 上班路上的真实体验" />
+
+      <label class="fb-stars-row">
+        <span class="l">效果评分</span>
+        <span class="fb-stars">
+          <span class="star" data-n="1">★</span>
+          <span class="star" data-n="2">★</span>
+          <span class="star" data-n="3">★</span>
+          <span class="star" data-n="4">★</span>
+          <span class="star" data-n="5">★</span>
+        </span>
+      </label>
+
+      <p class="fb-label">成片链接 <span class="fb-req">*</span></p>
+      <input type="url" id="fbUrl" class="fb-field" placeholder="https://v.douyin.com/... · 抖音 / 小红书 / 视频号 / B 站" />
+
+      <p class="fb-label">实际数据 <span class="fb-opt">选填</span></p>
+      <div class="fb-metrics">
+        <div class="fb-metric"><span>👁️ 播放</span><input type="text" id="fbViews"    placeholder="0" /></div>
+        <div class="fb-metric"><span>👍 点赞</span><input type="text" id="fbLikes"    placeholder="0" /></div>
+        <div class="fb-metric"><span>💬 评论</span><input type="text" id="fbComments" placeholder="0" /></div>
+      </div>
+
+      <p class="fb-label">创作心得 <span class="fb-opt">选填 · 100 字以内</span></p>
+      <textarea id="fbThoughts" class="fb-field" maxlength="100" rows="2" placeholder="哪里特别好用 / 哪里需要改进 / 拍摄时遇到的坑 ..."></textarea>
+
+      <p class="fb-label">创作者署名 <span class="fb-opt">选填</span></p>
+      <input type="text" id="fbCreatorName" class="fb-field" placeholder="默认显示：造物者 · kw_XXXX" />
+
+      <label class="fb-checkbox">
+        <input type="checkbox" id="fbIsPublic" checked />
+        <span>公开到「自由创作区」让别人看见、参考</span>
+      </label>
+
+      <div class="fb-actions">
+        <button class="btn-glow ghost" id="fbCancel">取消</button>
+        <button class="btn-glow primary" id="fbSubmit">提交创作 →</button>
+      </div>
+    </div>
+
+    <!-- 提交成功态 -->
+    <div class="feedback-box fb-success" id="fbBoxSuccess" style="display:none">
+      <div class="fb-success-icon">✨</div>
+      <h3>创作过程已沉淀</h3>
+      <p class="fb-success-desc">
+        你的完整创作链路（工单 + 成片 + 数据）已加入<strong>开物方法论训练库</strong>
+      </p>
+      <div class="fb-success-stats">
+        累计已沉淀 <strong id="fbTotalCases">—</strong> 份完整创作过程 ·
+        训练数据规模 <strong id="fbTotalSize">—</strong> 条
+      </div>
+      <div class="fb-success-actions">
+        <a class="btn-glow ghost" href="works.html">查看自由创作区</a>
+        <a class="btn-glow primary" href="question.html?dir=ecom">再做一份 →</a>
+        <button class="btn-glow ghost" id="fbCloseSuccess">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/data-layer.js"></script>
+  <script src="../js/common.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/result-templates.js"></script>
+  <script src="../js/result.js"></script>
+  <script src="../js/widget.js"></script>
+</body>
+</html>
